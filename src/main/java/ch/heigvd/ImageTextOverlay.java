@@ -7,11 +7,12 @@ import java.awt.*;
 
 public class ImageTextOverlay {
 
-    private static String _font = "Arial";
-    private static Color _color = Color.BLACK;
-    private static Color _backgroundColor = new Color(0,0,0,0);
-    private static int Size = 50;
-    private static int _fontWidth = Font.BOLD;
+    private  String _font = "Arial";
+    private  Color _color = Color.BLACK;
+    private  Color _backgroundColor = new Color(0,0,0,0);
+    private  int Size = 50;
+    private  int _fontWidth = Font.BOLD;
+    private  int _margin = 10;
 
     public enum POSITION {
         TOP, BOTTOM, LEFT, RIGHT, CENTER, TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT;
@@ -44,7 +45,8 @@ public class ImageTextOverlay {
     }
 
     public BufferedImage OverlayImage(BufferedImage image, BufferedImage imageToOverlay, String position, String format) {
-
+        if (image == null) throw new NullPointerException("Base image is null");
+        if (imageToOverlay == null) return image;
         // define base image width and height
         int width = Math.max(image.getWidth(), imageToOverlay.getWidth());
         int height = Math.max(image.getHeight(), imageToOverlay.getHeight());
@@ -67,39 +69,67 @@ public class ImageTextOverlay {
     }
 
 
-    public BufferedImage CreateImageText(String text){
+    public BufferedImage CreateImageText(String text, int maxWidth) {
 
+        if (text == null || text.isEmpty()) {
+            return null;
+        }
         Font font = new Font(_font, _fontWidth, Size);
         // create a temporary image to get the width and height of the text
         BufferedImage tempImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         Graphics tempGraphics = tempImage.getGraphics();
         tempGraphics.setFont(font);
         FontMetrics fontMetrics = tempGraphics.getFontMetrics();
+
+        // Calculate the text width and height
         int textWidth = fontMetrics.stringWidth(text);
         int textHeight = fontMetrics.getHeight();
 
-        // Create the image
-        BufferedImage image = new BufferedImage(textWidth, textHeight, BufferedImage.TYPE_INT_ARGB);
+        // Calculate the number of char on a line
+        double divisor = (double)textWidth / (maxWidth - 2 * _margin);
+        int nbCharOnLine = (int)Math.floor (text.length() / divisor);
+
+        // Calculate the number of lines needed based on text width and image width
+        int numLines = (int) Math.ceil(divisor);
+
+
+
+
+        // Create the image with adjusted height for multiple lines
+        BufferedImage image = new BufferedImage((numLines > 1 ? maxWidth : textWidth), textHeight * numLines, BufferedImage.TYPE_INT_ARGB);
         Graphics g = image.getGraphics();
 
         // set graphics attributes
         g.setColor(_backgroundColor);
-        g.fillRect(0, 0, textWidth, textHeight);
+        g.fillRect(0, 0, maxWidth, textHeight * numLines);
         g.setColor(_color);
-
-        // Draw the text on the image
         g.setFont(font);
-        g.drawString(text, 0, textHeight - fontMetrics.getDescent());
 
+        // Split and draw the text on multiple lines
+        int y = textHeight;
+        int startIndex = 0;
 
-        // Dispose ressources
+        for (int i = 0; i < numLines; i++) {
+            int endIndex;
+            int remainingChar = text.length() - (i * nbCharOnLine);
+            if (remainingChar < nbCharOnLine) {
+                endIndex = startIndex   + remainingChar;
+            } else {
+                endIndex =  nbCharOnLine * (i + 1);
+            }
+            String line = text.substring(startIndex, endIndex);
+            g.drawString(line, 0, y - fontMetrics.getDescent());
+            y += textHeight;
+            startIndex = endIndex;
+        }
+
+        // Dispose resources
         g.dispose();
         tempGraphics.dispose();
 
         return image;
     }
-
-    public static BufferedImage ChangeColorType(BufferedImage originalImage, int newType) {
+    public BufferedImage ChangeColorType(BufferedImage originalImage, int newType) {
         // Create a new BufferedImage with the desired type
         BufferedImage newImage = new BufferedImage(
                 originalImage.getWidth(),
@@ -115,7 +145,7 @@ public class ImageTextOverlay {
         return newImage;
     }
 
-    public static void SetFontWidth(String fontWidth) {
+    public void SetFontWidth(String fontWidth) {
         switch (fontWidth) {
             case "b":
             case "bold":
@@ -130,28 +160,30 @@ public class ImageTextOverlay {
                 break;
         }
     }
-    public static void SetFont(String font) {
+    public void SetFont(String font) {
         _font = font;
     }
-    public static void SetFontSize(String size) {
+    public void SetFontSize(String size) {
         Size = Integer.parseInt(size);
     }
-    public static void SetColor(String color) {
-        _color = Color.decode(color);
+    public void SetColor(String color) {
+        _color = GetColor(color);
     }
-
-    public static void SetBackgroundColor(String color) {
+    public void SetBackgroundColor(String color) {
         _backgroundColor = GetColor(color);
+    }
+    public void SetMargin(String margin) {
+        _margin = Integer.parseInt(margin);
     }
     public void SetSize(String size) {
         Size = Integer.parseInt(size);
     }
-    public static Point positionImage(BufferedImage baseImage, BufferedImage overlayImage, POSITION position) {
-        int x = 0;
-        int y = 0;
+    public Point positionImage(BufferedImage baseImage, BufferedImage overlayImage, POSITION position) {
+        int x = _margin;
+        int y = _margin;
 
-        int baseWidth = baseImage.getWidth();
-        int baseHeight = baseImage.getHeight();
+        int baseWidth = getImageWidth(baseImage);
+        int baseHeight = getImageHeight(baseImage);
 
         int overlayWidth = overlayImage.getWidth();
         int overlayHeight = overlayImage.getHeight();
@@ -190,7 +222,16 @@ public class ImageTextOverlay {
         }
         return new Point(x, y);
     }
-    public static Color GetColor(String hexColor) {
+
+    private int getImageHeight(BufferedImage image) {
+        return image.getHeight() - _margin;
+    }
+
+    private int getImageWidth(BufferedImage image) {
+        return image.getWidth() - _margin;
+    }
+
+    public Color GetColor(String hexColor) {
         int alpha = Integer.parseInt(hexColor.substring(1, 3), 16); // Extraction de la valeur alpha en hexadécimal
         int red = Integer.parseInt(hexColor.substring(3, 5), 16);
         int green = Integer.parseInt(hexColor.substring(5, 7), 16);
