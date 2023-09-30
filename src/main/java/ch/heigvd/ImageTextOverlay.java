@@ -7,11 +7,12 @@ import java.awt.*;
 
 public class ImageTextOverlay {
 
-    private static String _font = "Arial";
-    private static Color _color = Color.BLACK;
-    private static Color _backgroundColor = new Color(0,0,0,0);
-    private static int Size = 50;
-    private static int _fontWidth = Font.BOLD;
+    private  String _font = "Arial";
+    private  Color _color = Color.BLACK;
+    private  Color _backgroundColor = new Color(0,0,0,0);
+    private  int Size = 50;
+    private  int _fontWidth = Font.BOLD;
+    private  int _margin = 10;
 
     public enum POSITION {
         TOP, BOTTOM, LEFT, RIGHT, CENTER, TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT;
@@ -85,7 +86,7 @@ public class ImageTextOverlay {
         int textHeight = fontMetrics.getHeight();
 
         // Calculate the number of char on a line
-        double divisor = (double)textWidth / maxWidth;
+        double divisor = (double)textWidth / (maxWidth - 2 * _margin);
         int nbCharOnLine = (int)Math.floor (text.length() / divisor);
 
         // Calculate the number of lines needed based on text width and image width
@@ -128,7 +129,7 @@ public class ImageTextOverlay {
 
         return image;
     }
-    public static BufferedImage ChangeColorType(BufferedImage originalImage, int newType) {
+    public BufferedImage ChangeColorType(BufferedImage originalImage, int newType) {
         // Create a new BufferedImage with the desired type
         BufferedImage newImage = new BufferedImage(
                 originalImage.getWidth(),
@@ -144,7 +145,7 @@ public class ImageTextOverlay {
         return newImage;
     }
 
-    public static void SetFontWidth(String fontWidth) {
+    public void SetFontWidth(String fontWidth) {
         switch (fontWidth) {
             case "b":
             case "bold":
@@ -159,28 +160,30 @@ public class ImageTextOverlay {
                 break;
         }
     }
-    public static void SetFont(String font) {
+    public void SetFont(String font) {
         _font = font;
     }
-    public static void SetFontSize(String size) {
+    public void SetFontSize(String size) {
         Size = Integer.parseInt(size);
     }
-    public static void SetColor(String color) {
+    public void SetColor(String color) {
         _color = GetColor(color);
     }
-
-    public static void SetBackgroundColor(String color) {
+    public void SetBackgroundColor(String color) {
         _backgroundColor = GetColor(color);
+    }
+    public void SetMargin(String margin) {
+        _margin = Integer.parseInt(margin);
     }
     public void SetSize(String size) {
         Size = Integer.parseInt(size);
     }
-    public static Point positionImage(BufferedImage baseImage, BufferedImage overlayImage, POSITION position) {
-        int x = 0;
-        int y = 0;
+    public Point positionImage(BufferedImage baseImage, BufferedImage overlayImage, POSITION position) {
+        int x = _margin;
+        int y = _margin;
 
-        int baseWidth = baseImage.getWidth();
-        int baseHeight = baseImage.getHeight();
+        int baseWidth = getImageWidth(baseImage);
+        int baseHeight = getImageHeight(baseImage);
 
         int overlayWidth = overlayImage.getWidth();
         int overlayHeight = overlayImage.getHeight();
@@ -219,7 +222,16 @@ public class ImageTextOverlay {
         }
         return new Point(x, y);
     }
-    public static Color GetColor(String hexColor) {
+
+    private int getImageHeight(BufferedImage image) {
+        return image.getHeight() - _margin;
+    }
+
+    private int getImageWidth(BufferedImage image) {
+        return image.getWidth() - _margin;
+    }
+
+    public Color GetColor(String hexColor) {
         int alpha = Integer.parseInt(hexColor.substring(1, 3), 16); // Extraction de la valeur alpha en hexadécimal
         int red = Integer.parseInt(hexColor.substring(3, 5), 16);
         int green = Integer.parseInt(hexColor.substring(5, 7), 16);

@@ -17,6 +17,7 @@ public class Inko implements Callable {
 
     private static ImgHandler _imgHandler;
     private static ExifHandler _exifHandler;
+    private static ImageTextOverlay _overlayer;
     private static String _imagePath;
 
 
@@ -52,13 +53,13 @@ public class Inko implements Callable {
         _exifHandler.AddExifData(ExifHandler.EXIF.DateOriginal);
     }
 
-    @CommandLine.Option(names = {"-df", "--dateformat"}, description = "Set the format of the date", defaultValue = "dd.MM.yyyy HH:mm:ss")
+    @CommandLine.Option(names = {"-df", "--dateformat"}, description = "Set the format of the date")
         void setDateFormat(String param) {
         if (_exifHandler == null) throw new NullPointerException("no image path has been given");
         _exifHandler.SetDateFormat(param);
     }
 
-    @CommandLine.Option(names = {"-gmt", "--gmt"}, description = "Set GMT offset", defaultValue = "-2")
+    @CommandLine.Option(names = {"-gmt", "--gmt"}, description = "Set GMT offset")
     void setGMT(String param) {
         if (_exifHandler == null) throw new NullPointerException("no image path has been given");
         _exifHandler.SetGMT(Integer.parseInt(param));
@@ -84,27 +85,27 @@ public class Inko implements Callable {
 
     @CommandLine.Option(names = {"-f", "--font"}, description = "font", defaultValue = "Arial")
     private void setFont(String param) {
-        ImageTextOverlay.SetFont(param);
+        _overlayer.SetFont(param);
     }
 
     @CommandLine.Option(names = {"-fw", "--fontwidth"}, description = "font width : bold, italic, plain", defaultValue = "bold")
     private void setFontWidth(String param) {
-        ImageTextOverlay.SetFontWidth(param);
+        _overlayer.SetFontWidth(param);
     }
 
     @CommandLine.Option(names = {"-fs", "--fontSize"}, description = "font size px", defaultValue = "50")
     private void setFontSize(String param) {
-        ImageTextOverlay.SetFontSize(param);
+        _overlayer.SetFontSize(param);
     }
 
     @CommandLine.Option(names = {"-fc", "--fontcolor"}, description = "font color: #RRGGBB -> #2e00ff")
     private void setFontColor(String param) {
-        ImageTextOverlay.SetColor(param);
+        _overlayer.SetColor(param);
     }
 
     @CommandLine.Option(names = {"-bg", "--backgroundcolor"}, description = "background color:  #AARRGGBB")
     private void setBackgroundColor(String param) {
-        ImageTextOverlay.SetBackgroundColor(param);
+        _overlayer.SetBackgroundColor(param);
     }
 
     @CommandLine.Option(names = {"-s", "--sep"}, description = "Data separator")
@@ -122,9 +123,8 @@ public class Inko implements Callable {
     public Integer call() throws Exception {
         if (_imgHandler == null) return 0;
 
-        ImageTextOverlay overlayer = new ImageTextOverlay();
-        BufferedImage textImg = overlayer.CreateImageText(_exifHandler.ComputeImageText(), _imgHandler.getImage().getWidth());
-        BufferedImage overlayedImage = overlayer.OverlayImage(_imgHandler.getImage(),
+        BufferedImage textImg = _overlayer.CreateImageText(_exifHandler.ComputeImageText(), _imgHandler.getImage().getWidth());
+        BufferedImage overlayedImage = _overlayer.OverlayImage(_imgHandler.getImage(),
                 textImg,
                 _position,
                 _outputFormat);
@@ -141,7 +141,7 @@ public class Inko implements Callable {
      * @param args arguments
      */
     public static void main(String[] args) throws Exception {
-
+        _overlayer = new ImageTextOverlay();
         int exitCode = new CommandLine(new Inko()).execute(args);
         System.exit(exitCode);
     }
