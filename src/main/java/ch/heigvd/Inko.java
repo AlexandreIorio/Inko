@@ -46,10 +46,22 @@ public class Inko implements Callable {
         cptCmdText++;
     }
 
-    @CommandLine.Option(names = {"-d", "-date"}, description = "Get date of image")
+    @CommandLine.Option(names = {"-d", "--date"}, description = "Get date of image")
     void addDate(boolean called) {
-        if (_imgHandler == null) throw new NullPointerException("no image path has been given");
+        if (_exifHandler == null) throw new NullPointerException("no image path has been given");
         _exifHandler.AddExifData(ExifHandler.EXIF.DateOriginal);
+    }
+
+    @CommandLine.Option(names = {"-df", "--dateformat"}, description = "Set the format of the date", defaultValue = "dd.MM.yyyy HH:mm:ss")
+        void setDateFormat(String param) {
+        if (_exifHandler == null) throw new NullPointerException("no image path has been given");
+        _exifHandler.SetDateFormat(param);
+    }
+
+    @CommandLine.Option(names = {"-gmt", "--gmt"}, description = "Set GMT offset", defaultValue = "-2")
+    void setGMT(String param) {
+        if (_exifHandler == null) throw new NullPointerException("no image path has been given");
+        _exifHandler.SetGMT(Integer.parseInt(param));
     }
 
     @CommandLine.Option(names = {"-cm", "--cam_model"}, description = "Get model of camera")
@@ -62,6 +74,12 @@ public class Inko implements Callable {
     void addGpsLocation(boolean called) {
         if (_imgHandler == null) throw new NullPointerException("no image path has been given");
         _exifHandler.AddExifData(ExifHandler.EXIF.GPSLocation);
+    }
+
+    @CommandLine.Option(names = {"-is", "--imagesize"}, description = "Get the size of image in pixels")
+    void addImageSize(boolean called) {
+        if (_imgHandler == null) throw new NullPointerException("no image path has been given");
+        _exifHandler.AddExifData(ExifHandler.EXIF.ImageSize);
     }
 
     @CommandLine.Option(names = {"-f", "--font"}, description = "font", defaultValue = "Arial")

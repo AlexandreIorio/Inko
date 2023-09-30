@@ -6,8 +6,10 @@ import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import com.drew.imaging.ImageMetadataReader;
@@ -15,6 +17,13 @@ import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.exif.GpsDirectory;
 
 public class ExifHandler {
+
+    /**
+     * Constructor
+     * @param imagePath path to the image
+     * @throws ImageProcessingException if EXIF data can't be processed
+     * @throws IOException if the image can't be read or doesn't exist
+     */
     public ExifHandler(String imagePath) throws ImageProcessingException, IOException {
         try {
             metadata = new Metadata();
@@ -42,12 +51,19 @@ public class ExifHandler {
      * Store the EXIF data to compute
      */
     private ArrayList<EXIF> _exifDatas = new ArrayList<>();
+    /**
+     * Define the gmt offset
+     */
+    private int _gmt = -2;
+    /**
+     * Define the date format
+     */
+    private String _dateFormat = "dd.MM.yyyy HH:mm:ss";
 
     /**
      * Personal text to include
      */
     private Queue _personalTexts = new LinkedList<String>();
-
 
     /**
      * Add an EXIF data to compute
@@ -58,9 +74,30 @@ public class ExifHandler {
         _exifDatas.add(exifData);
     }
 
+    /**
+     * Add a personal text to include
+     * @param text the text to include
+     */
     public void AddText(String text) {
         _exifDatas.add(EXIF.Text);
         _personalTexts.add(text);
+    }
+
+    /**
+     * Set the gmt offset
+     * @param gmt
+     */
+    public void SetGMT(int gmt) {
+        _gmt = gmt;
+    }
+
+    /**
+     * Set the date format
+     * @param dateFormat the date format to set
+     */
+    public void SetDateFormat(String dateFormat) {
+        if (dateFormat == null || dateFormat.isEmpty()) return;
+        _dateFormat = dateFormat;
     }
 
     /**
@@ -88,14 +125,15 @@ public class ExifHandler {
                 if (date == null) {
                     data = "no date";
                 } else {
-                    data = date.toString();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat(_dateFormat);
+                    data = dateFormat.format(date);
                 }
                 break;
             case CameraModel:
                 data = getCameraModel();
                 break;
             case ImageSize:
-                // Processing for the image size
+                data = getImageSize();
                 break;
             case GPSLocation:
                 data = getGPSLocation();
@@ -151,10 +189,19 @@ public class ExifHandler {
         if (subIFDDirectory != null) {
             // Get date from EXIF
             date = subIFDDirectory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            //set GMT offset
+            calendar.add(Calendar.HOUR_OF_DAY, _gmt);
+            date = calendar.getTime();
         }
         return date;
     }
 
+    /**
+     * Get the camera model from EXIF data
+     * @return the camera model
+     */
     public String getCameraModel() {
         // Recherche du répertoire ExifIFD0, qui contient des informations sur la caméra
         Directory exifIFD0Directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
@@ -167,6 +214,10 @@ public class ExifHandler {
         }
     }
 
+    /**
+     * Get the GPS location from EXIF data
+     * @return The GPS location of the image
+     */
     public String getGPSLocation() {
         // Recherche du répertoire GPS, qui contient des informations de localisation
         Directory gpsDirectory = metadata.getFirstDirectoryOfType(GpsDirectory.class);
@@ -186,13 +237,23 @@ public class ExifHandler {
         }
     }
 
-    public String getImageSize() throws MetadataException {
+    /**
+     * Get the size from EXIF data
+     * @return the size of the image in pixels
+     */
+    public String getImageSize() {
         // Recherche du répertoire ExifSubIFD, qui contient des informations sur la taille de l'image
         Directory exifSubIFDDirectory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
 
         if (exifSubIFDDirectory != null) {
-            int imageWidth = exifSubIFDDirectory.getInt(ExifSubIFDDirectory.TAG_EXIF_IMAGE_WIDTH);
-            int imageHeight = exifSubIFDDirectory.getInt(ExifSubIFDDirectory.TAG_EXIF_IMAGE_HEIGHT);
+            int imageWidth = 0;
+            int imageHeight = 0;
+            try {
+                imageWidth = exifSubIFDDirectory.getInt(ExifSubIFDDirectory.TAG_EXIF_IMAGE_WIDTH);
+                imageHeight = exifSubIFDDirectory.getInt(ExifSubIFDDirectory.TAG_EXIF_IMAGE_HEIGHT);
+            } catch (MetadataException ex) {
+                System.out.println("Error when processing EXIF data to get the size");
+            }
 
             if (imageWidth > 0 && imageHeight > 0) {
                 return imageWidth + " x " + imageHeight + " pixels";
