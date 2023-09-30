@@ -44,7 +44,8 @@ public class ImageTextOverlay {
     }
 
     public BufferedImage OverlayImage(BufferedImage image, BufferedImage imageToOverlay, String position, String format) {
-
+        if (image == null) throw new NullPointerException("Base image is null");
+        if (imageToOverlay == null) return image;
         // define base image width and height
         int width = Math.max(image.getWidth(), imageToOverlay.getWidth());
         int height = Math.max(image.getHeight(), imageToOverlay.getHeight());
@@ -67,38 +68,66 @@ public class ImageTextOverlay {
     }
 
 
-    public BufferedImage CreateImageText(String text){
+    public BufferedImage CreateImageText(String text, int maxWidth) {
 
+        if (text == null || text.isEmpty()) {
+            return null;
+        }
         Font font = new Font(_font, _fontWidth, Size);
         // create a temporary image to get the width and height of the text
         BufferedImage tempImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         Graphics tempGraphics = tempImage.getGraphics();
         tempGraphics.setFont(font);
         FontMetrics fontMetrics = tempGraphics.getFontMetrics();
+
+        // Calculate the text width and height
         int textWidth = fontMetrics.stringWidth(text);
         int textHeight = fontMetrics.getHeight();
 
-        // Create the image
-        BufferedImage image = new BufferedImage(textWidth, textHeight, BufferedImage.TYPE_INT_ARGB);
+        // Calculate the number of char on a line
+        double divisor = (double)textWidth / maxWidth;
+        int nbCharOnLine = (int)Math.floor (text.length() / divisor);
+
+        // Calculate the number of lines needed based on text width and image width
+        int numLines = (int) Math.ceil(divisor);
+
+
+
+
+        // Create the image with adjusted height for multiple lines
+        BufferedImage image = new BufferedImage((numLines > 1 ? maxWidth : textWidth), textHeight * numLines, BufferedImage.TYPE_INT_ARGB);
         Graphics g = image.getGraphics();
 
         // set graphics attributes
         g.setColor(_backgroundColor);
-        g.fillRect(0, 0, textWidth, textHeight);
+        g.fillRect(0, 0, maxWidth, textHeight * numLines);
         g.setColor(_color);
-
-        // Draw the text on the image
         g.setFont(font);
-        g.drawString(text, 0, textHeight - fontMetrics.getDescent());
 
+        // Split and draw the text on multiple lines
+        int y = textHeight;
+        int startIndex = 0;
 
-        // Dispose ressources
+        for (int i = 0; i < numLines; i++) {
+            int endIndex;
+            int remainingChar = text.length() - (i * nbCharOnLine);
+            if (remainingChar < nbCharOnLine) {
+                endIndex = startIndex   + remainingChar;
+            } else {
+                endIndex =  nbCharOnLine * (i + 1);
+            }
+            String line = text.substring(startIndex, endIndex);
+            g.drawString(line, 0, y - fontMetrics.getDescent());
+            y += textHeight;
+            startIndex = endIndex;
+        }
+
+        // Dispose resources
         g.dispose();
         tempGraphics.dispose();
 
         return image;
     }
-
     public static BufferedImage ChangeColorType(BufferedImage originalImage, int newType) {
         // Create a new BufferedImage with the desired type
         BufferedImage newImage = new BufferedImage(
@@ -137,7 +166,7 @@ public class ImageTextOverlay {
         Size = Integer.parseInt(size);
     }
     public static void SetColor(String color) {
-        _color = Color.decode(color);
+        _color = GetColor(color);
     }
 
     public static void SetBackgroundColor(String color) {
