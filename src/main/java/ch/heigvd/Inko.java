@@ -1,10 +1,20 @@
+/*
+ * Class         : Inko
+ *
+ * Description   : Handle commandline and overlay text with image
+ *
+ * Version       : 1.0
+ *
+ * Date          : 1.10.2023
+ *
+ * Author     : Alexandre Iorio
+ */
+
 package ch.heigvd;
 
 import com.drew.imaging.ImageProcessingException;
 import picocli.CommandLine;
-
 import java.awt.image.BufferedImage;
-import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
@@ -55,12 +65,12 @@ public class Inko implements Callable {
     }
 
     @CommandLine.Option(names = {"-s", "--sep"}, description = "Data separator")
-    private void SetSeparator(String param) {
+    private void setSeparator(String param) {
         ExifHandler.separator = " " + param + " ";
     }
 
     @CommandLine.Option(names = {"-cr", "--credits"}, description = "Show credits")
-    public void ShowCredit(boolean param) {
+    public void showCredit(boolean param) {
         System.out.println(Description.DESCRIPTION);
     }
 
