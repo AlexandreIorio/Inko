@@ -144,14 +144,14 @@ target/InkoCli-1.0-SNAPSHOT.jar [OPTIONS]
    ```
    java -jar target/InkoCli-1.0-SNAPSHOT.jar -p data/img.jpg -t "Camera: " -cm -t "GPS : " -gps -is -bg "#80FFFFFF" -o output.jpg -sh
    ```
-5. Convert `JPG` to `PNG`
+5. Convert `PNG` to `JPG` (transparent background becomes white)
    ```
    java -jar target/InkoCli-1.0-SNAPSHOT.jar -p data/noBackgroud.png -o data/output/backgroud -of jpeg
    ```
    |before|after|
    |:---:|:---:|
    |![Background](data/noBackground.png)|![noTransparency](data/output/background.jpeg)
-6. Remove semi transparent backgroung  from `PNG` to `PNG`
+6. Remove semi transparent backgroung  from `PNG` to `JPG`
    ```
    java -jar target/InkoCli-1.0-SNAPSHOT.jar -p data/semiTransparent.png -o data/output/noTransparency -of jpeg
    ```
