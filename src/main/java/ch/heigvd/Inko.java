@@ -32,7 +32,7 @@ public class Inko implements Callable {
     /**
      * Image handler
      */
-    private ImgHandler _imgHandler;
+    private ImageHandler _imgHandler;
     /**
      * Exif handler
      */
@@ -60,7 +60,7 @@ public class Inko implements Callable {
     @CommandLine.Option(names = {"-p", "--imagePath"}, description = "Image path")
     private void setImagePath(String param) throws ImageProcessingException, IOException {
         _imagePath = param;
-        _imgHandler = new ImgHandler(param);
+        _imgHandler = new ImageHandler(param);
         _exifHandler = new ExifHandler(param);
     }
 
@@ -166,9 +166,9 @@ public class Inko implements Callable {
                 textImg,
                 _position,
                 _outputFormat);
-        ImgHandler.SaveImage(overlayedImage, _outputPath, _outputFormat);
+        ImageHandler.saveImage(overlayedImage, _outputPath, _outputFormat);
         if (_showImage) {
-            ImgHandler.openImage(_outputPath + '.' + _outputFormat);
+            ImageHandler.openImage(_outputPath + '.' + _outputFormat);
         }
         return 0;
     }
