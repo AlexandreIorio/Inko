@@ -1,25 +1,68 @@
+/*
+ * Class         : ImageTextOverlay
+ *
+ * Description   : This class can overlay two BufferedImage
+ *
+ * Version       : 1.0
+ *
+ * Date          : 1.10.2023
+ *
+ * Author        : Alexandre Iorio
+ */
+
 package ch.heigvd;
 
 import java.awt.image.BufferedImage;
 import java.awt.*;
 
 public class ImageTextOverlay {
-
+    /**
+     * Store the font type
+     */
     private  String _font = "Arial";
+
+    /**
+     * Store the font color
+     */
     private  Color _color = Color.BLACK;
+
+    /**
+     * Store the background color
+     */
     private  Color _backgroundColor = new Color(0,0,0,0);
-    private  int _size = 50;
+
+    /**
+     * Store de Size of the font
+     */
+    private  int _fontSize = 50;
+
+    /**
+     * Store the font width style
+     */
     private  int _fontWidth = Font.BOLD;
+
+    /**
+     * Store the margin
+     */
     private  int _margin = 10;
 
-    public ImageTextOverlay() {
+    /**
+     * Check if a string contains char
+     * @param string the string to check
+     * @return True if the string contains char
+     */
+    public static boolean ContainChar(String string) {
+        return string.matches(".*[a-zA-Z]+.*");
     }
 
-    public static boolean ContainChar(String size) {
-        return size.matches(".*[a-zA-Z]+.*");
-    }
-
-    public BufferedImage OverlayImage(BufferedImage image, BufferedImage imageToOverlay, String position, String format) {
+    /**
+     * Overlay 2 images
+     * @param image background image
+     * @param imageToOverlay image to overlay
+     * @param position the position on image
+     * @return The overlaid image
+     */
+    public BufferedImage overlayImages(BufferedImage image, BufferedImage imageToOverlay, String position) {
         if (image == null) throw new NullPointerException("Base image is null");
         if (imageToOverlay == null) return image;
         // define base image width and height
@@ -27,11 +70,11 @@ public class ImageTextOverlay {
         int height = Math.max(image.getHeight(), imageToOverlay.getHeight());
 
         BufferedImage overlaidImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        // get image
+        // get image in a Graphics2D
         Graphics2D g = overlaidImage.createGraphics();
         g.drawImage(image, 0, 0, null);
 
-        // define position
+        // define position to apply the overlay
         Point overlayPosition = positionImage(image, imageToOverlay, POSITION.getPosition(position));
 
         // draw overlay image over the base image
@@ -40,19 +83,21 @@ public class ImageTextOverlay {
         // dispose resources
         g.dispose();
 
-        // edit final image color type if jpeg output
-        if (format.equalsIgnoreCase("jpeg") || format.equalsIgnoreCase("jpg")) {
-            overlaidImage = ChangeColorType(overlaidImage, BufferedImage.TYPE_INT_RGB);
-        }
         return overlaidImage;
     }
 
+    /**
+     * Create an image with text
+     * @param text the text to apply
+     * @param maxWidth the max width to compute number of line
+     * @return an image with the text
+     */
     public BufferedImage CreateImageText(String text, int maxWidth) {
 
         if (text == null || text.isEmpty()) {
             return null;
         }
-        Font font = new Font(_font, _fontWidth, _size);
+        Font font = new Font(_font, _fontWidth, _fontSize);
         // create a temporary image to get the width and height of the text image to compute multilines
         BufferedImage tempImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         Graphics tempGraphics = tempImage.getGraphics();
@@ -105,22 +150,10 @@ public class ImageTextOverlay {
         return image;
     }
 
-    public BufferedImage ChangeColorType(BufferedImage originalImage, int newType) {
-        // Create a new BufferedImage with the desired type
-        BufferedImage newImage = new BufferedImage(
-                originalImage.getWidth(),
-                originalImage.getHeight(),
-                newType
-        );
-
-        // Create a Graphics2D object to draw the original image inside the new one
-        Graphics2D g2d = newImage.createGraphics();
-        g2d.drawImage(originalImage, 0, 0, null);
-        g2d.dispose();
-
-        return newImage;
-    }
-
+    /**
+     * Set the width style of the font
+     * @param fontWidth the font width style
+     */
     public void SetFontWidth(String fontWidth) {
         switch (fontWidth) {
             case "b":
@@ -137,27 +170,47 @@ public class ImageTextOverlay {
         }
     }
 
+    /**
+     * Set the font family
+     * @param font the font family
+     */
     public void SetFont(String font) {
         _font = font;
     }
 
+    /**
+     * Set the font size
+     * @param size the font size
+     */
     public void SetFontSize(String size) {
 
         if (ContainChar(size)) {
             System.out.println("size must be a number, default value ["+size+"] will be applied");
             return;
         }
-        _size = Integer.parseInt(size);
+        _fontSize = Integer.parseInt(size);
     }
 
+    /**
+     * Set the color of the font
+     * @param color ARGB color (#AARRGGBB)
+     */
     public void SetColor(String color) {
         _color = GetColor(color);
     }
 
+    /**
+     * Set the background color
+     * @param color The color to set
+     */
     public void SetBackgroundColor(String color) {
         _backgroundColor = GetColor(color);
     }
 
+    /**
+     * Set the margin, and it used to compute the position of the overlaid image
+     * @param margin the margin to set
+     */
     public void SetMargin(String margin) {
         if (ContainChar(margin)) {
             System.out.println("size must be a number, default value ["+_margin+"] will be applied");
@@ -166,6 +219,13 @@ public class ImageTextOverlay {
         _margin = Integer.parseInt(margin);
     }
 
+    /**
+     * Compute the position of the overlaid image
+     * @param baseImage the background image
+     * @param overlayImage the overlaid image
+     * @param position the position of the overlaid image
+     * @return the coordinates of the position
+     */
     public Point positionImage(BufferedImage baseImage, BufferedImage overlayImage, POSITION position) {
         int x = _margin;
         int y = _margin;
@@ -211,22 +271,40 @@ public class ImageTextOverlay {
         return new Point(x, y);
     }
 
+    /**
+     * Get the height of image
+     * @param image the image
+     * @return the height value of image
+     */
     private int getImageHeight(BufferedImage image) {
         return image.getHeight() - _margin;
     }
 
+    /**
+     * Get the width of image
+     * @param image the image
+     * @return the width value of image
+     */
     private int getImageWidth(BufferedImage image) {
         return image.getWidth() - _margin;
     }
 
+    /**
+     * Get Color from String
+     * @param hexColor ARGB color in hexadecimal (#AARRGGBB)
+     * @return the Color
+     */
     public Color GetColor(String hexColor) {
-        int alpha = Integer.parseInt(hexColor.substring(1, 3), 16); // Extraction de la valeur alpha en hexadécimal
+        int alpha = Integer.parseInt(hexColor.substring(1, 3), 16);
         int red = Integer.parseInt(hexColor.substring(3, 5), 16);
         int green = Integer.parseInt(hexColor.substring(5, 7), 16);
         int blue = Integer.parseInt(hexColor.substring(7, 9), 16);
         return new Color(red, green, blue, alpha);
     }
 
+    /**
+     * Enumerate possible positions
+     */
     public enum POSITION {
         TOP, BOTTOM, LEFT, RIGHT, CENTER, TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT;
 
