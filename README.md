@@ -42,10 +42,10 @@ java -jar Inko.jar [OPTIONS]
   ## Overlay data specification
 
   `-t, --text TEXT`  
-  Specify text to overlay on the image. You can use this option multiple times to add multiple lines of text.
+  Specify text to overlay on the image. You can use this option multiple times to add multiple text.
 
 - `-d, --date`  
-  Get the date of the image and overlay it.
+  Get the date of the image from EXIF.
 
 - `-df, --dateformat FORMAT`  
   Set the format of the date.
@@ -53,17 +53,22 @@ java -jar Inko.jar [OPTIONS]
 - `-gmt, --gmt OFFSET`  
   Set the GMT (Greenwich Mean Time) offset.
 
+- `-cm, --cam_model`  
+  Get the model of the camera that took the image from EXIF.
 - `-cm, --cammodel`  
   Get the model of the camera that took the image.
 
+- `-gps, --gps_location`  
+  Get the GPS location of the image from EXIF.
 - `-gps, --gpslocation`  
   Get the GPS location of the image.
 
 - `-is, --imagesize`  
-  Get the size of the image in pixels.
+  Get the size of the image in pixels from EXIF.
 
 - `-s, --sep SEPARATOR`  
   Specify the separator for data when adding Exif values.
+
 
 ## Overlay format
 
@@ -77,6 +82,7 @@ java -jar Inko.jar [OPTIONS]
   Specify the font size in pixels. (Default: 50)
 
 - `-fc, --fontcolor COLOR`  
+  Specify the font color in the format #AARRGGBB (e.g., #ff2e00ff).
   Specify the font color in the format #AARRGGBB (e.g., #ff2e00ff).
 
 - `-bg, --backgroundcolor COLOR`  
