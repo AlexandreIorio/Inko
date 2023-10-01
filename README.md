@@ -1,26 +1,40 @@
 # Inko - Custom Text and Exif Data Overlay on Images
 
 **Version**: 1.0
-![Forest Gump](data/output/fgo.jpeg)
-```
-java -jar target/InkoCli-1.0-SNAPSHOT.jar -p data/fg.jpg -t "Life is like a box of chocolates. You never know what you're gonna get." -f "z003" -bg "#80FFFFFF" -po c -fs 35 -o data/output/fgo -sh
-```
 
-## Prerequisites
-
-Inko is a Java program that can be built using Maven, a popular build automation and project management tool. Follow the steps below to compile your Java code, package it into a JAR file, and build your project using Maven.
-
-- Java Development Kit (JDK)
-- Maven
-  
 ## Description
 
 Inko is a command-line tool that allows you to add custom text or Exif (Exchangeable Image File Format) data to an image. You can use it to annotate your images with various information or labels. Can be used as converter for `JPG` and `PNG` format
 
+![Forest Gump](data/output/fgo.jpeg)
+```
+java -jar target/InkoCli-1.0-SNAPSHOT.jar -p data/fg.jpg -o data/output/fgo -fs 35 -f "z003" -fw bold -bg "#80FFFFFF" -t "Life is like a box of chocolates. You never know what you're gonna get." -po c -sh
+```
+
+## Prerequisites
+To build Inko, you need:
+- Java 17
+- Java Development Kit (JDK)
+- Maven
+  
+## Building process with Maven
+Inko is a Java program that can be built using Maven. Follow the steps below to compile your Java code, package it into a JAR file, and build your project using Maven.
+
+To build the program and is tests create new Maven configuration with this running options (Intellij):
+```
+dependency:resolve clean compile package
+```
+
+or use the terminal with these commands
+```
+mvn dependency:resolve
+mvn clean compile package
+```
+
 ## Usage
 
 ```
-java -jar Inko.jar [OPTIONS]
+target/InkoCli-1.0-SNAPSHOT.jar [OPTIONS]
 ```
 
 ## Options
