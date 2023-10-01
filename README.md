@@ -1,7 +1,7 @@
 # Inko - Custom Text and Exif Data Overlay on Images
 
 **Version**: 1.0
-![Forest Gump](data/fgo.jpeg)
+![Forest Gump](data/output/fgo.jpeg)
 ```
 java -jar target/InkoCli-1.0-SNAPSHOT.jar -p data/fg.jpg -t "Life is like a box of chocolates. You never know what you're gonna get." -f "z003" -bg "#80FFFFFF" -po c -fs 35 -o data/output/fgo -sh
 ```
