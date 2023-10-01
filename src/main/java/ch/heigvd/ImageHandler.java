@@ -1,20 +1,28 @@
+/*
+ * Class         : ImageHandler
+ *
+ * Description   : This class handle open, convert color mode and save image
+ *
+ * Version       : 1.0
+ *
+ * Date          : 1.10.2023
+ *
+ * Author        : Alexandre Iorio
+ */
+
 package ch.heigvd;
 
-
-import com.drew.imaging.ImageProcessingException;
 
 import javax.imageio.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
 
 /**
- * This class can handle an image and get EXIF data from it
+ * This class handle open, convert color mode and save image
  */
-public class ImgHandler {
+public class ImageHandler {
 
     /**
      * Store input format
@@ -29,9 +37,9 @@ public class ImgHandler {
      * Constructor
      *
      * @param imagePath path to the image
-     * @throws IOException              if the image can't be read or doesn't exist
+     * @throws IOException if the image can't be read or doesn't exist
      */
-    public ImgHandler(String imagePath) throws IOException {
+    public ImageHandler(String imagePath) throws IOException {
         try {
             _image = ImageIO.read(new File(imagePath));
             _inputFormat = FORMAT.valueOf(imagePath.substring(imagePath.lastIndexOf('.') + 1).toUpperCase());
@@ -47,28 +55,27 @@ public class ImgHandler {
      * @param image      the buffered image to save
      * @param outputPath the path where the image will be saved
      * @param format     the format of the image
-     * @throws IOException if the image can't be saved
      */
-    public static void SaveImage(BufferedImage image, String outputPath, String format) throws IOException {
+    public static void saveImage(BufferedImage image, String outputPath, String format) {
         if (image != null) {
             String outputFileName = outputPath + '.' + format;
-            try {
+
                 File outputFile = new File(outputFileName);
+                // important: to save png to jpg, is necessary to change color mode
                 if ((format.equalsIgnoreCase("jpg") || format.equalsIgnoreCase("jpeg")) && _inputFormat == FORMAT.PNG) {
                     image = convertARGBtoRGB(image);
                 }
-
-                boolean test = ImageIO.write(image, format, outputFile);
                 System.out.println("Image saved successfully: " + outputFile.getAbsolutePath());
-            } catch (IOException ex) {
-                System.out.println("Error during image saving: " + ex.getMessage());
-                throw ex;
-            }
         } else {
-            System.out.println("Error: Image is null.");
+            System.out.println("Nothing to save");
         }
     }
 
+    /**
+     * Open the image on the default user viewer
+     * @param imagePath the path to the image
+     * @throws IOException if an error occurs during the reading
+     */
     public static void openImage(String imagePath) throws IOException {
         try {
             File imageFile = new File(imagePath);
@@ -84,14 +91,19 @@ public class ImgHandler {
         }
     }
 
-    public static BufferedImage convertARGBtoRGB(BufferedImage argbImage) {
-        int width = argbImage.getWidth();
-        int height = argbImage.getHeight();
+    /**
+     * Convert color mode from ARGB to RGB
+     * @param image the image to convert
+     * @return the converted image
+     */
+    public static BufferedImage convertARGBtoRGB(BufferedImage image) {
+        int width = image.getWidth();
+        int height = image.getHeight();
         BufferedImage rgbImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-
+        // write all pixel in RGB mode
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                int argbColor = argbImage.getRGB(x, y);
+                int argbColor = image.getRGB(x, y);
                 int rgbColor = argbToRgb(argbColor);
                 if (argbColor >>> 24 == 0) { // Check if the alpha channel is transparent
                     rgbColor = 0xFFFFFF; // Set the color to white for transparent pixels
@@ -102,10 +114,15 @@ public class ImgHandler {
         return rgbImage;
     }
 
-    public static int argbToRgb(int argbColor) {
-        int red = (argbColor >> 16) & 0xFF;
-        int green = (argbColor >> 8) & 0xFF;
-        int blue = argbColor & 0xFF;
+    /**
+     * Convert a Pixel from ARGB to RGB mode
+     * @param pixelColor the pixel color to convert
+     * @return the converted pixel color
+     */
+    public static int argbToRgb(int pixelColor) {
+        int red = (pixelColor >> 16) & 0xFF;
+        int green = (pixelColor >> 8) & 0xFF;
+        int blue = pixelColor & 0xFF;
 
         return (red << 16) | (green << 8) | blue;
     }
@@ -122,13 +139,7 @@ public class ImgHandler {
      * Enumeration of image format
      */
     public enum FORMAT {
-        JPEG, JPG, PNG, GIF;
-
-        @Override
-        public String toString() {
-            return name().toLowerCase();
-        }
-
+        JPEG, JPG, PNG;
     }
 
 }

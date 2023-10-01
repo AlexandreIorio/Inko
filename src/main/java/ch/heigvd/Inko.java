@@ -1,10 +1,20 @@
+/*
+ * Class         : Inko
+ *
+ * Description   : Handle commandline and overlay text with image
+ *
+ * Version       : 1.0
+ *
+ * Date          : 1.10.2023
+ *
+ * Author     : Alexandre Iorio
+ */
+
 package ch.heigvd;
 
 import com.drew.imaging.ImageProcessingException;
 import picocli.CommandLine;
-
 import java.awt.image.BufferedImage;
-import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
@@ -13,6 +23,8 @@ import java.util.concurrent.Callable;
 @CommandLine.Command(name = "Inko", mixinStandardHelpOptions = true, version = "1.0", description = "Inko lets you write custom text or exif values on an image")
 
 public class Inko implements Callable {
+    //private attributes
+
     /**
      * counter for sequence of text
      */
@@ -20,52 +32,45 @@ public class Inko implements Callable {
     /**
      * Image handler
      */
-    private static ImgHandler _imgHandler;
+    private ImageHandler _imgHandler;
     /**
      * Exif handler
      */
-    private static ExifHandler _exifHandler;
+    private ExifHandler _exifHandler;
     /**
      * Image/Text overlayer
      */
-    private static ImageTextOverlay _overlayer = new ImageTextOverlay();
+    private ImageTextOverlay _overlayer = new ImageTextOverlay();
     /**
      * Image path
      */
-    private static String _imagePath;
-    @CommandLine.Option(names = {"-o", "--output"}, description = "Output path without extension", defaultValue = "OverlayedImage")
-    private static String _outputPath = "OverlayedImage";
-    @CommandLine.Option(names = {"-of", "--outputformat"}, description = "Output format : jpeg, png, gif")
-    private static String _outputFormat = "jpeg";
-    @CommandLine.Option(names = {"-po", "--position"}, description = "Text Position: l, r, b, t, c, lt, rt, lb, rb", defaultValue = "rb")
-    private static String _position = "rb";
-    @CommandLine.Option(names = {"-sh", "--show"}, description = "Show image after generation")
-    boolean _showImage = false;
+    private String _imagePath;
 
+    // Options which set private attributes
+    @CommandLine.Option(names = {"-sh", "--show"}, description = "Show image after generation")
+    private boolean _showImage = false;
+    @CommandLine.Option(names = {"-o", "--output"}, description = "Output path without extension", defaultValue = "OverlayedImage")
+    private String _outputPath = "OverlayedImage";
+    @CommandLine.Option(names = {"-of", "--outputformat"}, description = "Output format : jpeg, png, gif")
+    private String _outputFormat = "jpeg";
+    @CommandLine.Option(names = {"-po", "--position"}, description = "Text Position: l, r, b, t, c, lt, rt, lb, rb", defaultValue = "rb")
+    private String _position = "rb";
+
+    // Options which call methods
     @CommandLine.Option(names = {"-p", "--imagePath"}, description = "Image path")
-    private static void setImagePath(String param) throws ImageProcessingException, IOException {
+    private void setImagePath(String param) throws ImageProcessingException, IOException {
         _imagePath = param;
-        _imgHandler = new ImgHandler(param);
+        _imgHandler = new ImageHandler(param);
         _exifHandler = new ExifHandler(param);
     }
 
     @CommandLine.Option(names = {"-s", "--sep"}, description = "Data separator")
-    private static void SetSeparator(String param) {
+    private void setSeparator(String param) {
         ExifHandler.separator = " " + param + " ";
     }
 
-    /**
-     * program input on the command
-     *
-     * @param args arguments
-     */
-    public static void main(String[] args) throws Exception {
-        int exitCode = new CommandLine(new Inko()).execute(args);
-        System.exit(exitCode);
-    }
-
     @CommandLine.Option(names = {"-cr", "--credits"}, description = "Show credits")
-    public void ShowCredit(boolean param) {
+    public void showCredit(boolean param) {
         System.out.println(Description.DESCRIPTION);
     }
 
@@ -78,37 +83,37 @@ public class Inko implements Callable {
     }
 
     @CommandLine.Option(names = {"-d", "--date"}, description = "Get date of image")
-    void addDate(boolean called) {
+    private void addDate(boolean called) {
         if (_exifHandler == null) throw new NullPointerException("no image path has been given");
         _exifHandler.AddExifData(ExifHandler.EXIF.DateOriginal);
     }
 
     @CommandLine.Option(names = {"-df", "--dateformat"}, description = "Set the format of the date")
-    void setDateFormat(String param) {
+    private void setDateFormat(String param) {
         if (_exifHandler == null) throw new NullPointerException("no image path has been given");
         _exifHandler.SetDateFormat(param);
     }
 
     @CommandLine.Option(names = {"-gmt", "--gmt"}, description = "Set GMT offset")
-    void setGMT(String param) {
+    private void setGMT(String param) {
         if (_exifHandler == null) throw new NullPointerException("no image path has been given");
         _exifHandler.SetGMT(Integer.parseInt(param));
     }
 
     @CommandLine.Option(names = {"-cm", "--cammodel"}, description = "Get model of camera")
-    void addCamModel(boolean called) {
+    private void addCamModel(boolean called) {
         if (_imgHandler == null) throw new NullPointerException("no image path has been given");
         _exifHandler.AddExifData(ExifHandler.EXIF.CameraModel);
     }
 
     @CommandLine.Option(names = {"-gps", "--gpslocation"}, description = "Get gps location of image")
-    void addGpsLocation(boolean called) {
+    private void addGpsLocation(boolean called) {
         if (_imgHandler == null) throw new NullPointerException("no image path has been given");
         _exifHandler.AddExifData(ExifHandler.EXIF.GPSLocation);
     }
 
     @CommandLine.Option(names = {"-is", "--imagesize"}, description = "Get the size of image in pixels")
-    void addImageSize(boolean called) {
+    private void addImageSize(boolean called) {
         if (_imgHandler == null) throw new NullPointerException("no image path has been given");
         _exifHandler.AddExifData(ExifHandler.EXIF.ImageSize);
     }
@@ -143,18 +148,26 @@ public class Inko implements Callable {
         _overlayer.SetMargin(param);
     }
 
+    /**
+     * program input
+     *
+     * @param args arguments
+     */
+    public static void main(String[] args) throws Exception {
+        int exitCode = new CommandLine(new Inko()).execute(args);
+        System.exit(exitCode);
+    }
     @Override
     public Integer call() throws Exception {
         if (_imgHandler == null) return 0;
 
         BufferedImage textImg = _overlayer.CreateImageText(_exifHandler.ComputeImageText(), _imgHandler.getImage().getWidth());
-        BufferedImage overlayedImage = _overlayer.OverlayImage(_imgHandler.getImage(),
+        BufferedImage overlayedImage = _overlayer.overlayImages(_imgHandler.getImage(),
                 textImg,
-                _position,
-                _outputFormat);
-        ImgHandler.SaveImage(overlayedImage, _outputPath, _outputFormat);
+                _position);
+        ImageHandler.saveImage(overlayedImage, _outputPath, _outputFormat);
         if (_showImage) {
-            ImgHandler.openImage(_outputPath + '.' + _outputFormat);
+            ImageHandler.openImage(_outputPath + '.' + _outputFormat);
         }
         return 0;
     }
