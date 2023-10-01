@@ -164,7 +164,8 @@ public class Inko implements Callable {
         BufferedImage textImg = _overlayer.CreateImageText(_exifHandler.ComputeImageText(), _imgHandler.getImage().getWidth());
         BufferedImage overlayedImage = _overlayer.overlayImages(_imgHandler.getImage(),
                 textImg,
-                _position);
+                _position,
+                _outputFormat);
         ImageHandler.saveImage(overlayedImage, _outputPath, _outputFormat);
         if (_showImage) {
             ImageHandler.openImage(_outputPath + '.' + _outputFormat);
