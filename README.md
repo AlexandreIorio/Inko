@@ -45,7 +45,7 @@ target/InkoCli-1.0-SNAPSHOT.jar [OPTIONS]
   Specify the path to the input image.
 
 - `-o, --output PATH`  
-  Specify the output path and file name (without extension) for the overlaid image. (Default: OverlayedImage)
+  Specify the output path and file name (without extension) for the overlaid image. (Default: OverlaidImage)
 
 - `-of, --outputformat FORMAT`  
   Specify the output image format (jpeg, png, gif). (Default: jpeg)
@@ -125,7 +125,7 @@ target/InkoCli-1.0-SNAPSHOT.jar [OPTIONS]
    ```
    this commande launch `target/InkoCli-1.0-SNAPSHOT.jar`, get `data/img.jpg`, and apply a textual `-t "What does the cow say ?"` at the center of the image `-po c` with à red font color opacity 100% `-fc "#FFFF0000"` and size 150px `-fs 150`  with a yellow background opacity 50% `"#80FFFF00"`. The output file name is output.jpg `-o data/output/cow` and the image will pop up after the process `-sh`
 
-   |befor|after|
+   |before|after|
    |:---:|:---:|
    |![love](data/img.jpg)|![love2](data/output/cow.jpeg)|
 
@@ -148,14 +148,14 @@ target/InkoCli-1.0-SNAPSHOT.jar [OPTIONS]
    ```
    java -jar target/InkoCli-1.0-SNAPSHOT.jar -p data/noBackgroud.png -o data/output/backgroud -of jpeg
    ```
-   |befor|after|
+   |before|after|
    |:---:|:---:|
    |![Background](data/noBackground.png)|![noTransparency](data/output/background.jpeg)
 6. Remove semi transparent backgroung  from `PNG` to `PNG`
    ```
    java -jar target/InkoCli-1.0-SNAPSHOT.jar -p data/semiTransparent.png -o data/output/noTransparency -of jpeg
    ```
-   |befor|after|
+   |before|after|
    |:---:|:---:|
    |![semiTransparent](data/semiTransparent.png)|![noTransparency](data/output/noTransparency.jpeg)
 
