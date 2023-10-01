@@ -121,9 +121,14 @@ target/InkoCli-1.0-SNAPSHOT.jar [OPTIONS]
 
 1. Overlay text on an image:
    ```
-   java -jar target/InkoCli-1.0-SNAPSHOT.jar -p data/img.jpg -t "What does the cow say ?" -po c -fc "#FFFF0000" -fs 150 -bg "#80FFFF00" -o output.jpg -sh
+   java -jar target/InkoCli-1.0-SNAPSHOT.jar -p data/img.jpg -t "What does the cow say ?" -po c -fc "#FFFF0000" -fs 150 -bg "#80FFFF00" -o data/output/cow -sh
    ```
-   this commande launch `target/InkoCli-1.0-SNAPSHOT.jar`, get `data/img.jpg`, and apply a textual `-t "What does the cow say ?"` at the center of the image `-po c` with à red font color opacity 100% `-fc "#FFFF0000"` and size 150px `-fs 150`  with a yellow background opacity 50% `"#80FFFF00"`. The output file name is output.jpg `-o output.jpg` and the image will pop up after the process `-sh`
+   this commande launch `target/InkoCli-1.0-SNAPSHOT.jar`, get `data/img.jpg`, and apply a textual `-t "What does the cow say ?"` at the center of the image `-po c` with à red font color opacity 100% `-fc "#FFFF0000"` and size 150px `-fs 150`  with a yellow background opacity 50% `"#80FFFF00"`. The output file name is output.jpg `-o data/output/cow` and the image will pop up after the process `-sh`
+
+   |befor|after|
+   |:---:|:---:|
+   |![love](data/img.jpg)|![love2](data/output/cow.jpeg)|
+
 
 2. Show program credits:
    ```
