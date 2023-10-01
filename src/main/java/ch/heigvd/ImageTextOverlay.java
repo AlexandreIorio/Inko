@@ -62,7 +62,7 @@ public class ImageTextOverlay {
      * @param position the position on image
      * @return The overlaid image
      */
-    public BufferedImage overlayImages(BufferedImage image, BufferedImage imageToOverlay, String position) {
+    public BufferedImage overlayImages(BufferedImage image, BufferedImage imageToOverlay, String position, String format) {
         if (image == null) throw new NullPointerException("Base image is null");
         if (imageToOverlay == null) return image;
         // define base image width and height
@@ -82,6 +82,11 @@ public class ImageTextOverlay {
 
         // dispose resources
         g.dispose();
+
+        // edit final image color type if jpeg output
+        if (format.equalsIgnoreCase("jpeg") || format.equalsIgnoreCase("jpg")) {
+            overlaidImage = ChangeColorType(overlaidImage, BufferedImage.TYPE_INT_RGB);
+        }
 
         return overlaidImage;
     }
@@ -300,6 +305,28 @@ public class ImageTextOverlay {
         int green = Integer.parseInt(hexColor.substring(5, 7), 16);
         int blue = Integer.parseInt(hexColor.substring(7, 9), 16);
         return new Color(red, green, blue, alpha);
+    }
+
+    /**
+     * Change the color type of imge
+     * @param originalImage the image to convert
+     * @param newType the new type of image
+     * @return
+     */
+    public BufferedImage ChangeColorType(BufferedImage originalImage, int newType) {
+        // Create a new BufferedImage with the desired type
+        BufferedImage newImage = new BufferedImage(
+                originalImage.getWidth(),
+                originalImage.getHeight(),
+                newType
+        );
+
+        // Create a Graphics2D object to draw the original image inside the new one
+        Graphics2D g2d = newImage.createGraphics();
+        g2d.drawImage(originalImage, 0, 0, null);
+        g2d.dispose();
+
+        return newImage;
     }
 
     /**

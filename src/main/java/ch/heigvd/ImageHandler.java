@@ -56,16 +56,26 @@ public class ImageHandler {
      * @param outputPath the path where the image will be saved
      * @param format     the format of the image
      */
-    public static void saveImage(BufferedImage image, String outputPath, String format) {
+    public static void saveImage(BufferedImage image, String outputPath, String format) throws IOException {
         if (image != null) {
-            String outputFileName = outputPath + '.' + format;
+            try {
+                String outputFileName = outputPath + '.' + format;
 
                 File outputFile = new File(outputFileName);
                 // important: to save png to jpg, is necessary to change color mode
                 if ((format.equalsIgnoreCase("jpg") || format.equalsIgnoreCase("jpeg")) && _inputFormat == FORMAT.PNG) {
                     image = convertARGBtoRGB(image);
                 }
-                System.out.println("Image saved successfully: " + outputFile.getAbsolutePath());
+                boolean writed = ImageIO.write(image, format, outputFile);
+                if (writed) {
+                    System.out.println("Image saved successfully: " + outputFile.getAbsolutePath());
+                } else {
+                    System.out.println("Image not saved");
+                }
+            } catch (IOException ex){
+                System.out.println("Error occurred during save");
+                throw ex;
+            }
         } else {
             System.out.println("Nothing to save");
         }
@@ -73,6 +83,7 @@ public class ImageHandler {
 
     /**
      * Open the image on the default user viewer
+     *
      * @param imagePath the path to the image
      * @throws IOException if an error occurs during the reading
      */
@@ -92,7 +103,8 @@ public class ImageHandler {
     }
 
     /**
-     * Convert color mode from ARGB to RGB
+     * Convert color mode from ARGB to RGB and set transparent pixel to white
+     *
      * @param image the image to convert
      * @return the converted image
      */
@@ -116,6 +128,7 @@ public class ImageHandler {
 
     /**
      * Convert a Pixel from ARGB to RGB mode
+     *
      * @param pixelColor the pixel color to convert
      * @return the converted pixel color
      */
@@ -129,6 +142,7 @@ public class ImageHandler {
 
     /**
      * Get the image
+     *
      * @return the buffered image
      */
     public BufferedImage getImage() {
