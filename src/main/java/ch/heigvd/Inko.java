@@ -28,26 +28,26 @@ public class Inko implements Callable {
     /**
      * Image/Text overlayer
      */
-    private static ImageTextOverlay _overlayer;
+    private static ImageTextOverlay _overlayer = new ImageTextOverlay();
     /**
      * Image path
      */
     private static String _imagePath;
+    @CommandLine.Option(names = {"-o", "--output"}, description = "Output path without extension", defaultValue = "OverlayedImage")
+    private static String _outputPath = "OverlayedImage";
+    @CommandLine.Option(names = {"-of", "--outputformat"}, description = "Output format : jpeg, png, gif")
+    private static String _outputFormat = "jpeg";
+    @CommandLine.Option(names = {"-po", "--position"}, description = "Text Position: l, r, b, t, c, lt, rt, lb, rb", defaultValue = "rb")
+    private static String _position = "rb";
+    @CommandLine.Option(names = {"-sh", "--show"}, description = "Show image after generation")
+    boolean _showImage = false;
+
     @CommandLine.Option(names = {"-p", "--imagePath"}, description = "Image path")
     private static void setImagePath(String param) throws ImageProcessingException, IOException {
         _imagePath = param;
         _imgHandler = new ImgHandler(param);
         _exifHandler = new ExifHandler(param);
     }
-    @CommandLine.Option(names = {"-o", "--output"}, description = "Output path without extension", defaultValue = "OverlayedImage")
-    private static String _outputPath = "OverlayedImage";
-    @CommandLine.Option(names = {"-of", "--outputformat"}, description = "Output format : jpeg, png, gif")
-    private static String _outputFormat = "jpeg";
-    @CommandLine.Option(names = {"-sh", "--show"}, description = "Show image after generation")
-    boolean _showImage = false;
-    @CommandLine.Option(names = {"-po", "--position"}, description = "Text Position: l, r, b, t, c, lt, rt, lb, rb", defaultValue = "rb")
-    private static String _position = "rb";
-
 
     @CommandLine.Option(names = {"-s", "--sep"}, description = "Data separator")
     private static void SetSeparator(String param) {
@@ -60,7 +60,6 @@ public class Inko implements Callable {
      * @param args arguments
      */
     public static void main(String[] args) throws Exception {
-        _overlayer = new ImageTextOverlay();
         int exitCode = new CommandLine(new Inko()).execute(args);
         System.exit(exitCode);
     }
@@ -96,13 +95,13 @@ public class Inko implements Callable {
         _exifHandler.SetGMT(Integer.parseInt(param));
     }
 
-    @CommandLine.Option(names = {"-cm", "--cam_model"}, description = "Get model of camera")
+    @CommandLine.Option(names = {"-cm", "--cammodel"}, description = "Get model of camera")
     void addCamModel(boolean called) {
         if (_imgHandler == null) throw new NullPointerException("no image path has been given");
         _exifHandler.AddExifData(ExifHandler.EXIF.CameraModel);
     }
 
-    @CommandLine.Option(names = {"-gps", "--gps_location"}, description = "Get gps location of image")
+    @CommandLine.Option(names = {"-gps", "--gpslocation"}, description = "Get gps location of image")
     void addGpsLocation(boolean called) {
         if (_imgHandler == null) throw new NullPointerException("no image path has been given");
         _exifHandler.AddExifData(ExifHandler.EXIF.GPSLocation);
@@ -137,6 +136,11 @@ public class Inko implements Callable {
     @CommandLine.Option(names = {"-bg", "--backgroundcolor"}, description = "background color:  #AARRGGBB")
     private void setBackgroundColor(String param) {
         _overlayer.SetBackgroundColor(param);
+    }
+
+    @CommandLine.Option(names = {"-m", "--margin"}, description = "Set the margin of the overlay")
+    private void setMargin(String param) {
+        _overlayer.SetMargin(param);
     }
 
     @Override

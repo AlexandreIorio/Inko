@@ -3,7 +3,7 @@
 **Version**: 1.0
 ![Forest Gump](data/fgo.jpeg)
 ```
-java -jar target/InkoCli-1.0-SNAPSHOT.jar -p data/fg.jpg -t "Life is like a box of chocolates. You never know what you're gonna get." -f "z003" -bg "#80FFFFFF" -po c -fs 35 -o data/fgo -sh
+java -jar target/InkoCli-1.0-SNAPSHOT.jar -p data/fg.jpg -t "Life is like a box of chocolates. You never know what you're gonna get." -f "z003" -bg "#80FFFFFF" -po c -fs 35 -o data/output/fgo -sh
 ```
 
 ## Prerequisites
@@ -15,7 +15,7 @@ Inko is a Java program that can be built using Maven, a popular build automation
   
 ## Description
 
-Inko is a command-line tool that allows you to add custom text or Exif (Exchangeable Image File Format) data to an image. You can use it to annotate your images with various information or labels.
+Inko is a command-line tool that allows you to add custom text or Exif (Exchangeable Image File Format) data to an image. You can use it to annotate your images with various information or labels. Can be used as converter for `JPG` and `PNG` format
 
 ## Usage
 
@@ -28,13 +28,13 @@ java -jar Inko.jar [OPTIONS]
 ### File 
 
 - `-p, --imagePath PATH`  
-  Specifies the path to the input image.
+  Specify the path to the input image.
 
 - `-o, --output PATH`  
-  Specifies the output path and file name (without extension) for the overlaid image. (Default: OverlayedImage)
+  Specify the output path and file name (without extension) for the overlaid image. (Default: OverlayedImage)
 
 - `-of, --outputformat FORMAT`  
-  Specifies the output image format (jpeg, png, gif). (Default: jpeg)
+  Specify the output image format (jpeg, png, gif). (Default: jpeg)
 
 - `-sh, --show`  
   Show the overlaid image after processing.
@@ -53,22 +53,19 @@ java -jar Inko.jar [OPTIONS]
 - `-gmt, --gmt OFFSET`  
   Set the GMT (Greenwich Mean Time) offset.
 
-- `-cm, --cam_model`  
+- `-cm, --cammodel`  
   Get the model of the camera that took the image.
 
-- `-gps, --gps_location`  
+- `-gps, --gpslocation`  
   Get the GPS location of the image.
 
 - `-is, --imagesize`  
   Get the size of the image in pixels.
 
 - `-s, --sep SEPARATOR`  
-  Specifies the separator for data when adding Exif values.
+  Specify the separator for data when adding Exif values.
 
 ## Overlay format
-
-- `-po, --position POSITION`  
-  Specifies the position of the overlaid text. Options include l, r, b, t, c, lt, rt, lb, rb. (Default: rb)
 
 - `-f, --font FONT`  
   Specify the font to be used for text overlay. (Default: Arial)
@@ -80,11 +77,16 @@ java -jar Inko.jar [OPTIONS]
   Specify the font size in pixels. (Default: 50)
 
 - `-fc, --fontcolor COLOR`  
-  Specify the font color in the format #RRGGBB (e.g., #2e00ff).
+  Specify the font color in the format #AARRGGBB (e.g., #ff2e00ff).
 
 - `-bg, --backgroundcolor COLOR`  
   Specify the background color in the format #AARRGGBB.
-  
+
+- `-po, --position POSITION`  
+  Specify the position of the overlaid text. Options include l, r, b, t, c, lt, rt, lb, rb. (Default: rb)
+
+- `-m, --margin MARGIN`  
+  Specify the margin of the overlaid text (default: 10)
 
 ## Other options
 
@@ -113,10 +115,24 @@ java -jar Inko.jar [OPTIONS]
    java -jar target/InkoCli-1.0-SNAPSHOT.jar -p data/img.jpg -d -bg "#80FFFFFF" -o output.jpg -sh
    ```
 
-4. Get the camera model,  GPS location and the image size included personal texts:
+4. Get the camera model,  GPS location (if contained in EXIF data) and the image size included personal texts:
    ```
    java -jar target/InkoCli-1.0-SNAPSHOT.jar -p data/img.jpg -t "Camera: " -cm -t "GPS : " -gps -is -bg "#80FFFFFF" -o output.jpg -sh
    ```
+5. Convert `JPG` to `PNG`
+   ```
+   java -jar target/InkoCli-1.0-SNAPSHOT.jar -p data/noBackgroud.png -o data/output/backgroud -of jpeg
+   ```
+   |befor|after|
+   |:---:|:---:|
+   |![Background](data/noBackground.png)|![noTransparency](data/output/background.jpeg)
+6. Remove semi transparent backgroung  from `PNG` to `PNG`
+   ```
+   java -jar target/InkoCli-1.0-SNAPSHOT.jar -p data/semiTransparent.png -o data/output/noTransparency -of jpeg
+   ```
+   |befor|after|
+   |:---:|:---:|
+   |![semiTransparent](data/semiTransparent.png)|![noTransparency](data/output/noTransparency.jpeg)
 
 
 # Dependencies

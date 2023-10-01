@@ -7,6 +7,7 @@ import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -16,36 +17,23 @@ import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.exif.GpsDirectory;
 
-public class ExifHandler {
+import javax.imageio.ImageIO;
 
-    /**
-     * Constructor
-     * @param imagePath path to the image
-     * @throws ImageProcessingException if EXIF data can't be processed
-     * @throws IOException if the image can't be read or doesn't exist
-     */
-    public ExifHandler(String imagePath) throws ImageProcessingException, IOException {
-        try {
-            metadata = new Metadata();
-            metadata = ImageMetadataReader.readMetadata(new File(imagePath));
-        } catch (IOException ex) {
-            System.out.println("The path to image : " + imagePath + " doesn't exist");
-            throw ex;
-        } catch (ImageProcessingException ex) {
-            System.out.println("Error when processing EXIF data with image : " + imagePath);
-            throw ex;
-        }
-    }
+public class ExifHandler {
 
     /**
      * Separator between EXIF data or personal text
      */
     public static String separator = " - ";
-
     /**
      * Store EXIF data
      */
     private Metadata metadata;
+
+    /**
+     * Store the image path
+     */
+    private String _imagePath;
 
     /**
      * Store the EXIF data to compute
@@ -59,11 +47,30 @@ public class ExifHandler {
      * Define the date format
      */
     private String _dateFormat = "dd.MM.yyyy HH:mm:ss";
-
     /**
      * Personal text to include
      */
     private Queue _personalTexts = new LinkedList<String>();
+
+    /**
+     * Constructor
+     * @param imagePath path to the image
+     * @throws ImageProcessingException if EXIF data can't be processed
+     * @throws IOException if the image can't be read or doesn't exist
+     */
+    public ExifHandler(String imagePath) throws ImageProcessingException, IOException {
+        try {
+            metadata = new Metadata();
+            metadata = ImageMetadataReader.readMetadata(new File(imagePath));
+            _imagePath = imagePath;
+        } catch (IOException ex) {
+            System.out.println("The path to image : " + imagePath + " doesn't exist");
+            throw ex;
+        } catch (ImageProcessingException ex) {
+            System.out.println("Error when processing EXIF data with image : " + imagePath);
+            throw ex;
+        }
+    }
 
     /**
      * Add an EXIF data to compute
@@ -101,23 +108,13 @@ public class ExifHandler {
     }
 
     /**
-     * Enum EXIF data type
-     */
-    public enum EXIF {
-        DateOriginal,
-        CameraModel,
-        ImageSize,
-        GPSLocation,
-        Text
-    }
-
-    /**
      * Get EXIF data
      *
      * @param exifField EXIF data type tu get
+     * @throws IOException if the image can't be read or doesn't exist
      * @return EXIF data
      */
-    private String getExifDataToString(EXIF exifField) {
+    private String getExifDataToString(EXIF exifField) throws IOException {
         String data = "";
         switch (exifField) {
             case DateOriginal:
@@ -149,8 +146,9 @@ public class ExifHandler {
      * Compute all EXIF data and add personal text to a string
      *
      * @return EXIF data computed
+     *
      */
-    public String ComputeImageText() {
+    public String ComputeImageText() throws IOException {
 
         if(_exifDatas.isEmpty()) {
             return "";
@@ -241,28 +239,26 @@ public class ExifHandler {
      * Get the size from EXIF data
      * @return the size of the image in pixels
      */
-    public String getImageSize() {
-        // Recherche du répertoire ExifSubIFD, qui contient des informations sur la taille de l'image
-        Directory exifSubIFDDirectory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
-
-        if (exifSubIFDDirectory != null) {
-            int imageWidth = 0;
-            int imageHeight = 0;
-            try {
-                imageWidth = exifSubIFDDirectory.getInt(ExifSubIFDDirectory.TAG_EXIF_IMAGE_WIDTH);
-                imageHeight = exifSubIFDDirectory.getInt(ExifSubIFDDirectory.TAG_EXIF_IMAGE_HEIGHT);
-            } catch (MetadataException ex) {
-                System.out.println("Error when processing EXIF data to get the size");
-            }
-
-            if (imageWidth > 0 && imageHeight > 0) {
-                return imageWidth + " x " + imageHeight + " pixels";
-            } else {
-                return "Image size information not found in EXIF data.";
-            }
-        } else {
-            return "ExifSubIFD directory not found in EXIF data.";
+    public String getImageSize() throws IOException {
+        try{
+            BufferedImage image = ImageIO.read(new File(_imagePath));
+            return image.getWidth() +" x "+image.getHeight() + "px";
+        } catch (IOException ex){
+            System.out.println("Error when reading " + _imagePath);
+            throw ex;
         }
+
+    }
+
+    /**
+     * Enum EXIF data type
+     */
+    public enum EXIF {
+        DateOriginal,
+        CameraModel,
+        ImageSize,
+        GPSLocation,
+        Text
     }
 
 }

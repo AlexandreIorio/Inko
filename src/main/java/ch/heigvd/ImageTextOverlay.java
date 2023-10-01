@@ -1,7 +1,5 @@
 package ch.heigvd;
 
-import javax.swing.*;
-import javax.swing.text.StyleConstants;
 import java.awt.image.BufferedImage;
 import java.awt.*;
 
@@ -10,38 +8,15 @@ public class ImageTextOverlay {
     private  String _font = "Arial";
     private  Color _color = Color.BLACK;
     private  Color _backgroundColor = new Color(0,0,0,0);
-    private  int Size = 50;
+    private  int _size = 50;
     private  int _fontWidth = Font.BOLD;
     private  int _margin = 10;
 
-    public enum POSITION {
-        TOP, BOTTOM, LEFT, RIGHT, CENTER, TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT;
-
-        private static POSITION getPosition(String Position) {
-            switch (Position.toLowerCase()) {
-                case "t":
-                    return TOP;
-                case "b":
-                    return BOTTOM;
-                case "l":
-                    return LEFT;
-                case "r":
-                    return RIGHT;
-                case "c":
-                    return CENTER;
-                case "lt":
-                    return TOP_LEFT;
-                case "rt":
-                    return TOP_RIGHT;
-                case "lb":
-                    return BOTTOM_LEFT;
-                default:
-                    return BOTTOM_RIGHT;
-            }
-        }
+    public ImageTextOverlay() {
     }
 
-    public ImageTextOverlay() {
+    public static boolean ContainChar(String size) {
+        return size.matches(".*[a-zA-Z]+.*");
     }
 
     public BufferedImage OverlayImage(BufferedImage image, BufferedImage imageToOverlay, String position, String format) {
@@ -52,30 +27,33 @@ public class ImageTextOverlay {
         int height = Math.max(image.getHeight(), imageToOverlay.getHeight());
 
         BufferedImage overlaidImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-                // get image
+        // get image
         Graphics2D g = overlaidImage.createGraphics();
         g.drawImage(image, 0, 0, null);
 
+        // define position
         Point overlayPosition = positionImage(image, imageToOverlay, POSITION.getPosition(position));
+
         // draw overlay image over the base image
         g.drawImage(imageToOverlay, overlayPosition.x, overlayPosition.y, null);
 
         // dispose resources
         g.dispose();
+
+        // edit final image color type if jpeg output
         if (format.equalsIgnoreCase("jpeg") || format.equalsIgnoreCase("jpg")) {
             overlaidImage = ChangeColorType(overlaidImage, BufferedImage.TYPE_INT_RGB);
         }
         return overlaidImage;
     }
 
-
     public BufferedImage CreateImageText(String text, int maxWidth) {
 
         if (text == null || text.isEmpty()) {
             return null;
         }
-        Font font = new Font(_font, _fontWidth, Size);
-        // create a temporary image to get the width and height of the text
+        Font font = new Font(_font, _fontWidth, _size);
+        // create a temporary image to get the width and height of the text image to compute multilines
         BufferedImage tempImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         Graphics tempGraphics = tempImage.getGraphics();
         tempGraphics.setFont(font);
@@ -91,9 +69,6 @@ public class ImageTextOverlay {
 
         // Calculate the number of lines needed based on text width and image width
         int numLines = (int) Math.ceil(divisor);
-
-
-
 
         // Create the image with adjusted height for multiple lines
         BufferedImage image = new BufferedImage((numLines > 1 ? maxWidth : textWidth), textHeight * numLines, BufferedImage.TYPE_INT_ARGB);
@@ -129,6 +104,7 @@ public class ImageTextOverlay {
 
         return image;
     }
+
     public BufferedImage ChangeColorType(BufferedImage originalImage, int newType) {
         // Create a new BufferedImage with the desired type
         BufferedImage newImage = new BufferedImage(
@@ -137,10 +113,10 @@ public class ImageTextOverlay {
                 newType
         );
 
-        // Create a Graphics2D object to draw the original image onto the new one
+        // Create a Graphics2D object to draw the original image inside the new one
         Graphics2D g2d = newImage.createGraphics();
         g2d.drawImage(originalImage, 0, 0, null);
-        g2d.dispose(); // Dispose of the Graphics2D object
+        g2d.dispose();
 
         return newImage;
     }
@@ -160,24 +136,36 @@ public class ImageTextOverlay {
                 break;
         }
     }
+
     public void SetFont(String font) {
         _font = font;
     }
+
     public void SetFontSize(String size) {
-        Size = Integer.parseInt(size);
+
+        if (ContainChar(size)) {
+            System.out.println("size must be a number, default value ["+size+"] will be applied");
+            return;
+        }
+        _size = Integer.parseInt(size);
     }
+
     public void SetColor(String color) {
         _color = GetColor(color);
     }
+
     public void SetBackgroundColor(String color) {
         _backgroundColor = GetColor(color);
     }
+
     public void SetMargin(String margin) {
+        if (ContainChar(margin)) {
+            System.out.println("size must be a number, default value ["+_margin+"] will be applied");
+            return;
+        }
         _margin = Integer.parseInt(margin);
     }
-    public void SetSize(String size) {
-        Size = Integer.parseInt(size);
-    }
+
     public Point positionImage(BufferedImage baseImage, BufferedImage overlayImage, POSITION position) {
         int x = _margin;
         int y = _margin;
@@ -237,5 +225,33 @@ public class ImageTextOverlay {
         int green = Integer.parseInt(hexColor.substring(5, 7), 16);
         int blue = Integer.parseInt(hexColor.substring(7, 9), 16);
         return new Color(red, green, blue, alpha);
+    }
+
+    public enum POSITION {
+        TOP, BOTTOM, LEFT, RIGHT, CENTER, TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT;
+
+        private static POSITION getPosition(String Position) {
+            switch (Position.toLowerCase()) {
+                case "t":
+                    return TOP;
+                case "b":
+                    return BOTTOM;
+                case "l":
+                    return LEFT;
+                case "r":
+                    return RIGHT;
+                case "c":
+                    return CENTER;
+                case "lt":
+                    return TOP_LEFT;
+                case "rt":
+                    return TOP_RIGHT;
+                case "lb":
+                    return BOTTOM_LEFT;
+                default:
+                    return BOTTOM_RIGHT;
+            }
+        }
+
     }
 }
