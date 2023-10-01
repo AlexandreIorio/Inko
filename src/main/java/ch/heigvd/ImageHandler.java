@@ -1,7 +1,7 @@
 /*
  * Class         : ImageHandler
  *
- * Description   : This class handle open, convert color mode, read EXIF Metadata and save image
+ * Description   : This class handle open, convert color mode and save image
  *
  * Version       : 1.0
  *
@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * This class handle open, convert color mode, read EXIF Metadata and save image
+ * This class handle open, convert color mode and save image
  */
 public class ImageHandler {
 

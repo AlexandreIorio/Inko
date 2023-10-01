@@ -1,23 +1,34 @@
+/*
+ * Class         : ExifHandler
+ *
+ * Description   : This class handle EXIF metadata from a BufferedImage
+ *
+ * Version       : 1.0
+ *
+ * Date          : 1.10.2023
+ *
+ * Author        : Alexandre Iorio
+ */
+
 package ch.heigvd;
 
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import javax.imageio.ImageIO;
+
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.exif.GpsDirectory;
 
-import javax.imageio.ImageIO;
 
 public class ExifHandler {
 
@@ -28,7 +39,7 @@ public class ExifHandler {
     /**
      * Store EXIF data
      */
-    private Metadata metadata;
+    private Metadata _metadata;
 
     /**
      * Store the image path
@@ -60,8 +71,8 @@ public class ExifHandler {
      */
     public ExifHandler(String imagePath) throws ImageProcessingException, IOException {
         try {
-            metadata = new Metadata();
-            metadata = ImageMetadataReader.readMetadata(new File(imagePath));
+            _metadata = new Metadata();
+            _metadata = ImageMetadataReader.readMetadata(new File(imagePath));
             _imagePath = imagePath;
         } catch (IOException ex) {
             System.out.println("The path to image : " + imagePath + " doesn't exist");
@@ -110,7 +121,7 @@ public class ExifHandler {
     /**
      * Get EXIF data
      *
-     * @param exifField EXIF data type tu get
+     * @param exifField EXIF data type to get
      * @throws IOException if the image can't be read or doesn't exist
      * @return EXIF data
      */
@@ -181,7 +192,7 @@ public class ExifHandler {
      */
     private Date GetDate() {
         //get the directory with the date
-        ExifSubIFDDirectory subIFDDirectory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+        ExifSubIFDDirectory subIFDDirectory = _metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
 
         Date date = null;
         if (subIFDDirectory != null) {
@@ -198,11 +209,11 @@ public class ExifHandler {
 
     /**
      * Get the camera model from EXIF data
-     * @return the camera model
+     * @return the camera model from EXIF data
      */
     public String getCameraModel() {
         // Recherche du répertoire ExifIFD0, qui contient des informations sur la caméra
-        Directory exifIFD0Directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+        Directory exifIFD0Directory = _metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
 
         if (exifIFD0Directory != null) {
             String cameraModel = exifIFD0Directory.getString(ExifIFD0Directory.TAG_MODEL);
@@ -214,14 +225,14 @@ public class ExifHandler {
 
     /**
      * Get the GPS location from EXIF data
-     * @return The GPS location of the image
+     * @return The GPS location from EXIF data
      */
     public String getGPSLocation() {
-        // Recherche du répertoire GPS, qui contient des informations de localisation
-        Directory gpsDirectory = metadata.getFirstDirectoryOfType(GpsDirectory.class);
+        // Looking for gps directory in EXIF data
+        Directory gpsDirectory = _metadata.getFirstDirectoryOfType(GpsDirectory.class);
 
         if (gpsDirectory != null) {
-            // Obtenez les coordonnées GPS (latitude et longitude) si disponibles
+            // get GPS coordinates if exists
             String latitude = gpsDirectory.getDescription(GpsDirectory.TAG_LATITUDE);
             String longitude = gpsDirectory.getDescription(GpsDirectory.TAG_LONGITUDE);
 
@@ -236,7 +247,7 @@ public class ExifHandler {
     }
 
     /**
-     * Get the size from EXIF data
+     * Get the size from the image
      * @return the size of the image in pixels
      */
     public String getImageSize() throws IOException {
@@ -247,7 +258,6 @@ public class ExifHandler {
             System.out.println("Error when reading " + _imagePath);
             throw ex;
         }
-
     }
 
     /**
