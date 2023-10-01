@@ -49,8 +49,8 @@ public class Inko implements Callable {
     // Options which set private attributes
     @CommandLine.Option(names = {"-sh", "--show"}, description = "Show image after generation")
     private boolean _showImage = false;
-    @CommandLine.Option(names = {"-o", "--output"}, description = "Output path without extension", defaultValue = "OverlayedImage")
-    private String _outputPath = "OverlayedImage";
+    @CommandLine.Option(names = {"-o", "--output"}, description = "Output path without extension", defaultValue = "OverlaidImage")
+    private String _outputPath = "OverlaidImage";
     @CommandLine.Option(names = {"-of", "--outputformat"}, description = "Output format : jpeg, png, gif")
     private String _outputFormat = "jpeg";
     @CommandLine.Option(names = {"-po", "--position"}, description = "Text Position: l, r, b, t, c, lt, rt, lb, rb", defaultValue = "rb")
