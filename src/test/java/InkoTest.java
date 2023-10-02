@@ -29,8 +29,14 @@ public class InkoTest {
 
     @Test
     public void charInNum() {
-        RunSuccess("-p", "src/test/resources/test.jpg", "-o", "src/test/resources/output/charInNum", "-of", "jpg", "-fs", "f5");
-        RunSuccess("-p", "src/test/resources/test.jpg", "-o", "src/test/resources/output/charInNum", "-of", "jpg", "-m", "m5");
+        RunSuccess("-p", "src/test/resources/test.jpg", "-o", "src/test/resources/output/charInFontSize", "-of", "jpg", "-fs", "f5");
+        RunSuccess("-p", "src/test/resources/test.jpg", "-o", "src/test/resources/output/charInMargin", "-of", "jpg", "-m", "m5");
+    }
+
+    @Test
+    public void badColor() {
+        RunSuccess("-p", "src/test/resources/test.jpg", "-o", "src/test/resources/output/badFontColor", "-of", "jpg", "-fc", "#abcdefgh");
+        RunSuccess("-p", "src/test/resources/test.jpg", "-o", "src/test/resources/output/bacBackGroundColor", "-of", "jpg", "-bg", "#abcdefgh");
     }
 
     @Test

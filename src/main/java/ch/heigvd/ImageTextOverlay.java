@@ -24,7 +24,7 @@ public class ImageTextOverlay {
     /**
      * Store the font color
      */
-    private  Color _color = Color.BLACK;
+    private  Color _fontColor = Color.BLACK;
 
     /**
      * Store the background color
@@ -53,6 +53,14 @@ public class ImageTextOverlay {
      */
     public static boolean ContainChar(String string) {
         return string.matches(".*[a-zA-Z]+.*");
+    }
+
+    public static boolean isHex(String string) {
+        return string.matches("^#[0-9A-Fa-f]+$");
+    }
+
+    public static boolean isARGBColor(String string) {
+        return isHex(string) && string.length() == 9;
     }
 
     /**
@@ -127,7 +135,7 @@ public class ImageTextOverlay {
         // set graphics attributes
         g.setColor(_backgroundColor);
         g.fillRect(0, 0, maxWidth, textHeight * numLines);
-        g.setColor(_color);
+        g.setColor(_fontColor);
         g.setFont(font);
 
         // Split and draw the text on multiple lines
@@ -200,8 +208,13 @@ public class ImageTextOverlay {
      * Set the color of the font
      * @param color ARGB color (#AARRGGBB)
      */
-    public void SetColor(String color) {
-        _color = GetColor(color);
+    public void setFontColor(String color) {
+        if (isARGBColor(color)) {
+            _fontColor = GetColor(color);
+        } else {
+            System.out.println(color + " is not a valid color, default value [black] will be applied");
+        }
+
     }
 
     /**
@@ -209,7 +222,13 @@ public class ImageTextOverlay {
      * @param color The color to set
      */
     public void SetBackgroundColor(String color) {
-        _backgroundColor = GetColor(color);
+
+        if (isARGBColor(color)){
+            _backgroundColor = GetColor(color);
+        } else {
+            System.out.println(color + " is not a valid color, default value [transparent] will be applied");
+        }
+
     }
 
     /**
