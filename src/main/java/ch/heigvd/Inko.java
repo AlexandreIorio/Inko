@@ -135,7 +135,7 @@ public class Inko implements Callable {
 
     @CommandLine.Option(names = {"-fc", "--fontcolor"}, description = "font color: #RRGGBB -> #2e00ff")
     private void setFontColor(String param) {
-        _overlayer.SetColor(param);
+        _overlayer.setFontColor(param);
     }
 
     @CommandLine.Option(names = {"-bg", "--backgroundcolor"}, description = "background color:  #AARRGGBB")
