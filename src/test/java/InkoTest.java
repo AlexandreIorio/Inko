@@ -2,51 +2,101 @@ import ch.heigvd.Inko;
 import org.junit.*;
 import picocli.CommandLine;
 
+import java.io.File;
+
 import static org.junit.Assert.*;
 
 public class InkoTest {
 
-    private static void RunSuccess(String... args) {
+    private static int run(String... args) {
         Inko inko = new Inko();
         CommandLine commandLine = new CommandLine(inko);
-        int exitCode = commandLine.execute(args);
-        assertEquals(0, exitCode);
+        return commandLine.execute(args);
     }
+
+    private static boolean fileExists(String filePath) {
+        java.io.File file = new java.io.File(filePath);
+        return file.exists();
+    }
+
     @Test
     public void jpgToPng() {
-        RunSuccess("-p", "src/test/resources/test.jpg", "-o", "src/test/resources/output/jpgToPng", "-of", "png");
+        String outputFormat = "png";
+        String outputFilePath = "src/test/resources/jpgToPng";
+        int exitCode = run("-p", "src/test/resources/test.jpg", "-o", outputFilePath, "-of", outputFormat);
+        boolean exists = fileExists(outputFilePath);
+        assertTrue(exists && exitCode == 0);
     }
 
     @Test
     public void pngToJpg() {
-        RunSuccess("-p", "src/test/resources/test.png", "-o", "src/test/resources/output/pngToJpg", "-of", "jpg");
+        String outputFormat = "jpg";
+        String outputFilePath = "src/test/resources/pngToJpg";
+        int exitCode = run("-p", "src/test/resources/test.png", "-o", outputFilePath, "-of", outputFormat);
+        boolean exists = fileExists(outputFilePath);
+        assertTrue(exists && exitCode == 0);
     }
 
     @Test
     public void pngSemiTransparentToJpg() {
-        RunSuccess("-p", "src/test/resources/testSemiTransparent.png", "-o", "src/test/resources/output/pngSemiTransparentToJpg", "-of", "jpg");
+        String outputFormat = "jpg";
+        String outputFilePath = "src/test/resources/pngSemiTransparentToJpg";
+        int exitCode = run("-p", "src/test/resources/testSemiTransparent.png", "-o", outputFilePath, "-of", outputFormat);
+        boolean exists = fileExists(outputFilePath);
+        assertTrue(exists && exitCode == 0);
     }
 
     @Test
-    public void charInNum() {
-        RunSuccess("-p", "src/test/resources/test.jpg", "-o", "src/test/resources/output/charInFontSize", "-of", "jpg", "-fs", "f5");
-        RunSuccess("-p", "src/test/resources/test.jpg", "-o", "src/test/resources/output/charInMargin", "-of", "jpg", "-m", "m5");
+    public void charInFontSize() {
+        String outputFormat = "jpg";
+        String outputFilePath = "src/test/resources/charInFontSize";
+        int exitCode = run("-p", "src/test/resources/test.jpg", "-o", outputFilePath, "-of", outputFormat, "-fs", "f5");
+        boolean exists = fileExists(outputFilePath);
+        assertTrue(exists && exitCode == 0);
     }
 
     @Test
-    public void badColor() {
-        RunSuccess("-p", "src/test/resources/test.jpg", "-o", "src/test/resources/output/badFontColor", "-of", "jpg", "-fc", "#abcdefgh");
-        RunSuccess("-p", "src/test/resources/test.jpg", "-o", "src/test/resources/output/bacBackGroundColor", "-of", "jpg", "-bg", "#abcdefgh");
+    public void charInMargin() {
+        String outputFormat = "jpg";
+        String outputFilePath = "src/test/resources/charInMargin";
+        int exitCode = run("-p", "src/test/resources/test.jpg", "-o", outputFilePath, "-of", outputFormat, "-fs", "f5");
+        boolean exists = fileExists(outputFilePath);
+        assertTrue(exists && exitCode == 0);
+    }
+
+
+    @Test
+    public void badFontColor() {
+        String outputFormat = "jpg";
+        String outputFilePath = "src/test/resources/badFontColor";
+        int exitCode = run("-p", "src/test/resources/test.jpg", "-o", outputFilePath, "-of", outputFormat, "-fc", "#abcdefgh");
+        boolean exists = fileExists(outputFilePath);
+        assertTrue(exists && exitCode == 0);
+    }
+
+    @Test
+    public void badBackgroundColor() {
+        String outputFormat = "jpg";
+        String outputFilePath = "src/test/resources/badBackgroundColor";
+        int exitCode = run("-p", "src/test/resources/test.jpg", "-o", "src/test/resources/output/bacBackGroundColor", "-of", "jpg", "-bg", "#abcdefgh");
+        boolean exists = fileExists(outputFilePath);
+        assertTrue(exists && exitCode == 0);
     }
 
     @Test
     public void fullParamWithExif() {
-        RunSuccess("-p", "src/test/resources/exif.jpg", "-o", "src/test/resources/output/fullExif",
-                "-of", "png", "-t", "Date:", "-d", "-df", "dd.MM.yy", "-gmt", "-2", "-cm", "-gps", "-is", "-s", "_",
+        String outputFormat = "png";
+        String outputFilePath = "src/test/resources/fullExif";
+        int exitCode = run("-p", "src/test/resources/exif.jpg", "-o", outputFilePath,
+                "-of", outputFormat, "-t", "Date:", "-d", "-df", "dd.MM.yy", "-gmt", "-2", "-cm", "-gps", "-is", "-s", "_",
                 "-f", "Ubuntu", "-fw", "Italic", "-fs", "80", "-fc", "#FFFF0000", "-bg", "#8000FFFF", "-po", "lt", "-m", "20");
+        boolean exists = fileExists(outputFilePath);
+        assertTrue(exists && exitCode == 0);
     }
 
-
-
-
+    @Test
+    public void runEmpty() {
+        int exitCode = run();
+        assertEquals(0, exitCode);
+    }
 }
