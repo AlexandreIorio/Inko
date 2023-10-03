@@ -16,8 +16,7 @@ package ch.heigvd;
 import javax.imageio.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * This class handle open, convert color mode and save image
@@ -40,8 +39,8 @@ public class ImageHandler {
      * @throws IOException if the image can't be read or doesn't exist
      */
     public ImageHandler(String imagePath) throws IOException {
-        try {
-            _image = ImageIO.read(new File(imagePath));
+        try (InputStream stream = new FileInputStream(imagePath)){
+            _image = ImageIO.read(stream);
             _inputFormat = FORMAT.valueOf(imagePath.substring(imagePath.lastIndexOf('.') + 1).toUpperCase());
         } catch (IOException ex) {
             System.out.println("The path to image : " + imagePath + " doesn't exist");
@@ -58,15 +57,14 @@ public class ImageHandler {
      */
     public static void saveImage(BufferedImage image, String outputPath, String format) throws IOException {
         if (image != null) {
-            try {
-                String outputFileName = outputPath + '.' + format;
+            File outputFile = new File(outputPath + '.' + format);
+            try (OutputStream stream = new FileOutputStream(outputFile)){
 
-                File outputFile = new File(outputFileName);
                 // important: to save png to jpg, is necessary to change color mode
                 if ((format.equalsIgnoreCase("jpg") || format.equalsIgnoreCase("jpeg")) && _inputFormat == FORMAT.PNG) {
                     image = convertARGBtoRGB(image);
                 }
-                boolean writed = ImageIO.write(image, format, outputFile);
+                boolean writed = ImageIO.write(image, format, stream);
                 if (writed) {
                     System.out.println("Image saved successfully: " + outputFile.getAbsolutePath());
                 } else {
@@ -88,7 +86,8 @@ public class ImageHandler {
      * @throws IOException if an error occurs during the reading
      */
     public static void openImage(String imagePath) throws IOException {
-        try {
+
+        try { // It's the responsibility of the caller to close the file
             File imageFile = new File(imagePath);
             if (imageFile.exists()) {
                 Desktop desktop = Desktop.getDesktop();

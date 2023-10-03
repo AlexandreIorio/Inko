@@ -19,7 +19,9 @@ import com.drew.metadata.exif.ExifSubIFDDirectory;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -70,9 +72,10 @@ public class ExifHandler {
      * @throws IOException if the image can't be read or doesn't exist
      */
     public ExifHandler(String imagePath) throws ImageProcessingException, IOException {
-        try {
-            _metadata = new Metadata();
+
+        try { // don't need to use try with resources because the metadata implement a close in case of error
             _metadata = ImageMetadataReader.readMetadata(new File(imagePath));
+            _metadata = new Metadata();
             _imagePath = imagePath;
         } catch (IOException ex) {
             System.out.println("The path to image : " + imagePath + " doesn't exist");
@@ -251,8 +254,9 @@ public class ExifHandler {
      * @return the size of the image in pixels
      */
     public String getImageSize() throws IOException {
-        try{
-            BufferedImage image = ImageIO.read(new File(_imagePath));
+        BufferedImage image;
+        try(InputStream stream = new FileInputStream(_imagePath)){
+            image = ImageIO.read(stream);
             return image.getWidth() +" x "+image.getHeight() + "px";
         } catch (IOException ex){
             System.out.println("Error when reading " + _imagePath);
