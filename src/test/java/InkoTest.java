@@ -24,7 +24,8 @@ public class InkoTest {
         String outputFormat = "png";
         String outputFilePath = "src/test/resources/jpgToPng";
         int exitCode = run("-p", "src/test/resources/test.jpg", "-o", outputFilePath, "-of", outputFormat);
-        boolean exists = fileExists(outputFilePath);
+        String absolutePath = System.getProperty("user.dir")+'/'+outputFilePath +'.'+ outputFormat;
+        boolean exists = fileExists(absolutePath);
         assertTrue(exists && exitCode == 0);
     }
 
@@ -33,7 +34,8 @@ public class InkoTest {
         String outputFormat = "jpg";
         String outputFilePath = "src/test/resources/pngToJpg";
         int exitCode = run("-p", "src/test/resources/test.png", "-o", outputFilePath, "-of", outputFormat);
-        boolean exists = fileExists(outputFilePath);
+        String absolutePath = System.getProperty("user.dir")+'/'+outputFilePath +'.'+ outputFormat;
+        boolean exists = fileExists(absolutePath);
         assertTrue(exists && exitCode == 0);
     }
 
@@ -42,7 +44,8 @@ public class InkoTest {
         String outputFormat = "jpg";
         String outputFilePath = "src/test/resources/pngSemiTransparentToJpg";
         int exitCode = run("-p", "src/test/resources/testSemiTransparent.png", "-o", outputFilePath, "-of", outputFormat);
-        boolean exists = fileExists(outputFilePath);
+        String absolutePath = System.getProperty("user.dir")+'/'+outputFilePath +'.'+ outputFormat;
+        boolean exists = fileExists(absolutePath);
         assertTrue(exists && exitCode == 0);
     }
 
@@ -51,7 +54,8 @@ public class InkoTest {
         String outputFormat = "jpg";
         String outputFilePath = "src/test/resources/charInFontSize";
         int exitCode = run("-p", "src/test/resources/test.jpg", "-o", outputFilePath, "-of", outputFormat, "-fs", "f5");
-        boolean exists = fileExists(outputFilePath);
+        String absolutePath = System.getProperty("user.dir")+'/'+outputFilePath +'.'+ outputFormat;
+        boolean exists = fileExists(absolutePath);
         assertTrue(exists && exitCode == 0);
     }
 
@@ -60,7 +64,8 @@ public class InkoTest {
         String outputFormat = "jpg";
         String outputFilePath = "src/test/resources/charInMargin";
         int exitCode = run("-p", "src/test/resources/test.jpg", "-o", outputFilePath, "-of", outputFormat, "-fs", "f5");
-        boolean exists = fileExists(outputFilePath);
+        String absolutePath = System.getProperty("user.dir")+'/'+outputFilePath +'.'+ outputFormat;
+        boolean exists = fileExists(absolutePath);
         assertTrue(exists && exitCode == 0);
     }
 
@@ -70,7 +75,8 @@ public class InkoTest {
         String outputFormat = "jpg";
         String outputFilePath = "src/test/resources/badFontColor";
         int exitCode = run("-p", "src/test/resources/test.jpg", "-o", outputFilePath, "-of", outputFormat, "-fc", "#abcdefgh");
-        boolean exists = fileExists(outputFilePath);
+        String absolutePath = System.getProperty("user.dir")+'/'+outputFilePath +'.'+ outputFormat;
+        boolean exists = fileExists(absolutePath);
         assertTrue(exists && exitCode == 0);
     }
 
@@ -78,8 +84,9 @@ public class InkoTest {
     public void badBackgroundColor() {
         String outputFormat = "jpg";
         String outputFilePath = "src/test/resources/badBackgroundColor";
-        int exitCode = run("-p", "src/test/resources/test.jpg", "-o", "src/test/resources/output/bacBackGroundColor", "-of", "jpg", "-bg", "#abcdefgh");
-        boolean exists = fileExists(outputFilePath);
+        int exitCode = run("-p", "src/test/resources/test.jpg", "-o",outputFilePath, "-of", outputFormat, "-bg", "#abcdefgh");
+        String absolutePath = System.getProperty("user.dir")+'/'+outputFilePath +'.'+ outputFormat;
+        boolean exists = fileExists(absolutePath);
         assertTrue(exists && exitCode == 0);
     }
 
@@ -90,7 +97,8 @@ public class InkoTest {
         int exitCode = run("-p", "src/test/resources/exif.jpg", "-o", outputFilePath,
                 "-of", outputFormat, "-t", "Date:", "-d", "-df", "dd.MM.yy", "-gmt", "-2", "-cm", "-gps", "-is", "-s", "_",
                 "-f", "Ubuntu", "-fw", "Italic", "-fs", "80", "-fc", "#FFFF0000", "-bg", "#8000FFFF", "-po", "lt", "-m", "20");
-        boolean exists = fileExists(outputFilePath);
+        String absolutePath = System.getProperty("user.dir")+'/'+outputFilePath +'.'+ outputFormat;
+        boolean exists = fileExists(absolutePath);
         assertTrue(exists && exitCode == 0);
     }
 
