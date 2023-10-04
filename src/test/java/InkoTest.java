@@ -8,6 +8,8 @@ import static org.junit.Assert.*;
 
 public class InkoTest {
 
+    public static final String OUTPUT_FOLDER = "src/test/resources/output/";
+
     /**
      * Run the program with the given arguments
      * @param args
@@ -42,7 +44,7 @@ public class InkoTest {
     @Test
     public void jpgToPng() {
         String outputFormat = "png";
-        String outputFilePath = "src/test/resources/jpgToPng";
+        String outputFilePath = OUTPUT_FOLDER + "jpgToPng";
 
         File outputFile = getTestFile(outputFilePath, outputFormat);
 
@@ -56,7 +58,7 @@ public class InkoTest {
     @Test
     public void pngToJpg() {
         String outputFormat = "jpg";
-        String outputFilePath = "src/test/resources/pngToJpg";
+        String outputFilePath = OUTPUT_FOLDER + "pngToJpg";
 
         File outputFile = getTestFile(outputFilePath, outputFormat);
 
@@ -69,7 +71,7 @@ public class InkoTest {
     @Test
     public void pngSemiTransparentToJpg() {
         String outputFormat = "jpg";
-        String outputFilePath = "src/test/resources/pngSemiTransparentToJpg";
+        String outputFilePath = OUTPUT_FOLDER + "pngSemiTransparentToJpg";
 
         File outputFile = getTestFile(outputFilePath, outputFormat);
 
@@ -82,7 +84,7 @@ public class InkoTest {
     @Test
     public void charInFontSize() {
         String outputFormat = "jpg";
-        String outputFilePath = "src/test/resources/charInFontSize";
+        String outputFilePath = OUTPUT_FOLDER + "charInFontSize";
 
         File outputFile = getTestFile(outputFilePath, outputFormat);
 
@@ -96,7 +98,7 @@ public class InkoTest {
     @Test
     public void charInMargin() {
         String outputFormat = "jpg";
-        String outputFilePath = "src/test/resources/charInMargin";
+        String outputFilePath = OUTPUT_FOLDER + "charInMargin";
 
         File outputFile = getTestFile(outputFilePath, outputFormat);
 
@@ -111,7 +113,7 @@ public class InkoTest {
     @Test
     public void badFontColor() {
         String outputFormat = "jpg";
-        String outputFilePath = "src/test/resources/badFontColor";
+        String outputFilePath = OUTPUT_FOLDER + "badFontColor";
 
         File outputFile = getTestFile(outputFilePath, outputFormat);
 
@@ -124,7 +126,7 @@ public class InkoTest {
     @Test
     public void badBackgroundColor() {
         String outputFormat = "jpg";
-        String outputFilePath = "src/test/resources/badBackgroundColor";
+        String outputFilePath = OUTPUT_FOLDER + "badBackgroundColor";
 
         File outputFile = getTestFile(outputFilePath, outputFormat);
 
@@ -137,7 +139,7 @@ public class InkoTest {
     @Test
     public void fullParamWithExif() {
         String outputFormat = "png";
-        String outputFilePath = "src/test/resources/fullExif";
+        String outputFilePath = OUTPUT_FOLDER + "fullExif";
 
         File outputFile = getTestFile(outputFilePath, outputFormat);
 

@@ -75,7 +75,6 @@ public class ExifHandler {
 
         try { // don't need to use try with resources because the metadata implement a close in case of error
             _metadata = ImageMetadataReader.readMetadata(new File(imagePath));
-            _metadata = new Metadata();
             _imagePath = imagePath;
         } catch (IOException ex) {
             System.out.println("The path to image : " + imagePath + " doesn't exist");
