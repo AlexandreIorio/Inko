@@ -47,6 +47,6 @@ Thumbs.db
 README.pdf
 
 ### Output ###
-src/test/resources/output/
+src/test/resources/output/*
 
 OverlayedImage.jpeg
