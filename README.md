@@ -109,11 +109,14 @@ target/InkoCli-1.0-SNAPSHOT.jar [OPTIONS]
 
 ### Other options
 
-- `-cr, --credits`  or simply run the program without arguments
+- `-cr, --credits` or simply run the program without arguments  
   Show program credits.
 
 - `-h, --help`  
   Show program help and description.
+
+-  `-V, --version`  
+   Print version information and exit.
 
 ## Examples
 
