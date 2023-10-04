@@ -198,7 +198,7 @@ public class ImageTextOverlay {
     public void SetFontSize(String size) {
 
         if (ContainChar(size)) {
-            System.out.println("size must be a number, default value ["+size+"] will be applied");
+            System.out.println("size must be a number, default value ["+_fontSize+"] will be applied");
             return;
         }
         _fontSize = Integer.parseInt(size);
