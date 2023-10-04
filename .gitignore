@@ -50,3 +50,5 @@ README.pdf
 src/test/resources/output/*
 
 OverlayedImage.jpeg
+
+src/test/resources/output/
