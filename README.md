@@ -53,9 +53,9 @@ target/InkoCli-1.0-SNAPSHOT.jar [OPTIONS]
 - `-sh, --show`  
   Show the overlaid image after processing.
 
-  ## Overlay data specification
+### Overlay data specification
 
-  `-t, --text TEXT`  
+- `-t, --text TEXT`  
   Specify text to overlay on the image. You can use this option multiple times to add multiple text.
 
 - `-d, --date`  
@@ -83,8 +83,7 @@ target/InkoCli-1.0-SNAPSHOT.jar [OPTIONS]
 - `-s, --sep SEPARATOR`  
   Specify the separator for data when adding Exif values.
 
-
-## Overlay format
+### Overlay format
 
 - `-f, --font FONT`  
   Specify the font to be used for text overlay. (Default: Arial)
@@ -108,9 +107,9 @@ target/InkoCli-1.0-SNAPSHOT.jar [OPTIONS]
 - `-m, --margin MARGIN`  
   Specify the margin of the overlaid text (default: 10)
 
-## Other options
+### Other options
 
-- `-cr, --credits`  
+- `-cr, --credits`  or simply run the program without arguments
   Show program credits.
 
 - `-h, --help`  
@@ -148,6 +147,8 @@ target/InkoCli-1.0-SNAPSHOT.jar [OPTIONS]
    ```
    java -jar target/InkoCli-1.0-SNAPSHOT.jar -p data/noBackgroud.png -o data/output/backgroud -of jpeg
    ```
+
+   *consult this section in dark mode*
    |before|after|
    |:---:|:---:|
    |![Background](data/noBackground.png)|![noTransparency](data/output/background.jpeg)
