@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
 
-@CommandLine.Command(name = "Inko", mixinStandardHelpOptions = true, version = "1.0", description = "Inko lets you write custom text or exif values on an image")
+@CommandLine.Command(name = "Inko", mixinStandardHelpOptions = true, version = "1.0.0", description = "Inko lets you write custom text or exif values on an image")
 
 public class Inko implements Callable {
     //private attributes

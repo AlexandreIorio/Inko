@@ -1,6 +1,6 @@
 # Inko - Custom Text and Exif Data Overlay on Images
 
-**Version**: 1.0
+Version 1.0.0
 
 ## Description
 
