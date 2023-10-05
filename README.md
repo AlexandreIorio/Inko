@@ -67,13 +67,9 @@ target/InkoCli-1.0-SNAPSHOT.jar [OPTIONS]
 - `-gmt, --gmt OFFSET`  
   Set the GMT (Greenwich Mean Time) offset.
 
-- `-cm, --cam_model`  
-  Get the model of the camera that took the image from EXIF.
 - `-cm, --cammodel`  
   Get the model of the camera that took the image.
 
-- `-gps, --gps_location`  
-  Get the GPS location of the image from EXIF.
 - `-gps, --gpslocation`  
   Get the GPS location of the image.
 
