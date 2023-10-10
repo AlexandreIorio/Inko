@@ -154,11 +154,17 @@ public class Inko implements Callable {
      * @param args arguments
      */
     public static void main(String[] args) throws Exception {
+
+        long begin = System.currentTimeMillis(); // init timer
         if (args.length == 0) {
             System.out.println(Description.DESCRIPTION);
             System.exit(0);
         }
+
         int exitCode = new CommandLine(new Inko()).execute(args);
+        long end = System.currentTimeMillis(); // end of timer
+        long executionTime = end - begin;
+        System.out.println("Execution time : " + executionTime + " ms");
         System.exit(exitCode);
     }
     @Override
